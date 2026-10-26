@@ -171,16 +171,12 @@ export default function Footer() {
           </div>
 
           <div>
-            <h5 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '1rem', letterSpacing: '0.05em' }}>ADMIN</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
-              <li>
-                <Link href="/admin" style={{ color: 'var(--crimson-royal)', fontWeight: 600 }}>
-                  📦 Orders & Fulfillment Dashboard
-                </Link>
-              </li>
-              <li style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-                Store Operations & Meesho Forward Dispatch
-              </li>
+            <h5 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '1rem', letterSpacing: '0.05em' }}>SUPPORT</h5>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              <li>Doorstep Delivery Help</li>
+              <li>Breakage Replacement Claim</li>
+              <li>WhatsApp Support</li>
+              <li>Track Festive Parcel</li>
             </ul>
           </div>
         </div>

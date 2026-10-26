@@ -14,8 +14,31 @@ import {
   Lock,
   Tag,
   AlertCircle,
-  Loader2
+  Loader2,
+  CreditCard,
+  Banknote
 } from 'lucide-react';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
+const loadRazorpayScript = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (typeof window !== 'undefined' && window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -34,7 +57,7 @@ export default function CheckoutPage() {
     state: ''
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'ONLINE_TEST'>('COD');
+  const [paymentMethod, setPaymentMethod] = useState<'RAZORPAY' | 'COD'>('RAZORPAY');
   const [isLocating, setIsLocating] = useState(false);
   const [locationSuccessMsg, setLocationSuccessMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -125,39 +148,192 @@ export default function CheckoutPage() {
     }
 
     setIsSubmitting(true);
+    const orderId = `TEJ-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 
+    // 1. If Cash on Delivery
+    if (paymentMethod === 'COD') {
+      try {
+        const newOrder: Order = {
+          id: orderId,
+          customerName: formData.fullName,
+          customerPhone: formData.phone,
+          customerEmail: formData.email,
+          shippingAddress: formData,
+          items: items.map((i) => ({
+            productId: i.product.id,
+            productName: i.product.name,
+            quantity: i.quantity,
+            price: i.product.price,
+            meeshoSkus: i.product.meeshoMapping.map((m) => m.sku)
+          })),
+          subtotal,
+          discount,
+          shippingFee: 0,
+          totalAmount: total,
+          paymentMethod: 'COD',
+          paymentStatus: 'pending',
+          fulfillmentStatus: 'unfulfilled',
+          createdAt: new Date().toISOString()
+        };
+
+        await saveOrder(newOrder);
+        clearCart();
+        router.push(`/order-success?orderId=${orderId}`);
+      } catch (err: any) {
+        console.error('Failed to submit COD order', err);
+        setErrorMsg(err?.message || 'Something went wrong. Please try again.');
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
+    // 2. If Razorpay Online Payment (UPI / Cards / Netbanking)
     try {
-      const orderId = `TEJ-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+      const isScriptLoaded = await loadRazorpayScript();
+      if (!isScriptLoaded) {
+        setErrorMsg('Failed to load Razorpay payment SDK. Please check your connection.');
+        setIsSubmitting(false);
+        return;
+      }
 
-      const newOrder: Order = {
-        id: orderId,
-        customerName: formData.fullName,
-        customerPhone: formData.phone,
-        customerEmail: formData.email,
-        shippingAddress: formData,
-        items: items.map((i) => ({
-          productId: i.product.id,
-          productName: i.product.name,
-          quantity: i.quantity,
-          price: i.product.price,
-          meeshoSkus: i.product.meeshoMapping.map((m) => m.sku)
-        })),
-        subtotal,
-        discount,
-        shippingFee: 0,
-        totalAmount: total,
-        paymentMethod,
-        paymentStatus: paymentMethod === 'ONLINE_TEST' ? 'completed' : 'pending',
-        fulfillmentStatus: 'unfulfilled',
-        createdAt: new Date().toISOString()
+      // Create Razorpay Order on server
+      const res = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: total,
+          receipt: orderId,
+          notes: {
+            customerName: formData.fullName,
+            phone: formData.phone
+          }
+        })
+      });
+
+      const orderData = await res.json();
+      if (!res.ok) {
+        throw new Error(orderData.error || 'Failed to initialize payment gateway.');
+      }
+
+      // If in Mock / Test Mode (no keys yet configured in .env.local)
+      if (orderData.isMock) {
+        const newOrder: Order = {
+          id: orderId,
+          customerName: formData.fullName,
+          customerPhone: formData.phone,
+          customerEmail: formData.email,
+          shippingAddress: formData,
+          items: items.map((i) => ({
+            productId: i.product.id,
+            productName: i.product.name,
+            quantity: i.quantity,
+            price: i.product.price,
+            meeshoSkus: i.product.meeshoMapping.map((m) => m.sku)
+          })),
+          subtotal,
+          discount,
+          shippingFee: 0,
+          totalAmount: total,
+          paymentMethod: 'RAZORPAY',
+          paymentStatus: 'completed',
+          fulfillmentStatus: 'unfulfilled',
+          razorpayOrderId: orderData.id,
+          razorpayPaymentId: `pay_mock_${Date.now()}`,
+          createdAt: new Date().toISOString()
+        };
+
+        await saveOrder(newOrder);
+        clearCart();
+        router.push(`/order-success?orderId=${orderId}`);
+        return;
+      }
+
+      // Open Real Razorpay Standard Checkout Popup
+      const options = {
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'Tejasya Living',
+        description: `Shubh Deepavali Order #${orderId}`,
+        image: '/images/shubh_box.jpg',
+        order_id: orderData.id,
+        handler: async function (response: any) {
+          try {
+            // Verify payment signature
+            const verifyRes = await fetch('/api/razorpay/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+
+            const verifyData = await verifyRes.json();
+            if (!verifyData.verified) {
+              throw new Error('Payment verification failed.');
+            }
+
+            // Save verified order to Supabase
+            const newOrder: Order = {
+              id: orderId,
+              customerName: formData.fullName,
+              customerPhone: formData.phone,
+              customerEmail: formData.email,
+              shippingAddress: formData,
+              items: items.map((i) => ({
+                productId: i.product.id,
+                productName: i.product.name,
+                quantity: i.quantity,
+                price: i.product.price,
+                meeshoSkus: i.product.meeshoMapping.map((m) => m.sku)
+              })),
+              subtotal,
+              discount,
+              shippingFee: 0,
+              totalAmount: total,
+              paymentMethod: 'RAZORPAY',
+              paymentStatus: 'completed',
+              fulfillmentStatus: 'unfulfilled',
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              createdAt: new Date().toISOString()
+            };
+
+            await saveOrder(newOrder);
+            clearCart();
+            router.push(`/order-success?orderId=${orderId}`);
+          } catch (err: any) {
+            console.error('Error verifying payment', err);
+            setErrorMsg('Payment verification failed. Please contact support.');
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: formData.fullName,
+          contact: formData.phone,
+          email: formData.email || undefined
+        },
+        theme: {
+          color: '#7A1E22' // Tejasya Sindoori Crimson Brand Color
+        },
+        modal: {
+          ondismiss: () => {
+            setIsSubmitting(false);
+          }
+        }
       };
 
-      await saveOrder(newOrder);
-      clearCart();
-      router.push(`/order-success?orderId=${orderId}`);
-    } catch (err: unknown) {
-      console.error('Failed to submit order', err);
-      setErrorMsg((err as Error)?.message || 'Something went wrong. Please try again.');
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.on('payment.failed', function (response: any) {
+        setErrorMsg(response?.error?.description || 'Payment failed. Please try another method.');
+        setIsSubmitting(false);
+      });
+      razorpayInstance.open();
+    } catch (err: any) {
+      console.error('Razorpay initialization error', err);
+      setErrorMsg(err?.message || 'Failed to initiate payment.');
       setIsSubmitting(false);
     }
   };
@@ -507,7 +683,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Payment Method */}
+              {/* Payment Method Selector */}
               <div className="artisan-card" style={{ padding: '1.75rem' }}>
                 <h3 style={{ color: 'var(--text-primary)', fontSize: '1.15rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Lock size={18} color="var(--terracotta)" />
@@ -515,12 +691,50 @@ export default function CheckoutPage() {
                 </h3>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {/* Razorpay Online Option */}
                   <label
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '1rem',
+                      padding: '1.15rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: paymentMethod === 'RAZORPAY' ? '2px solid var(--crimson-royal)' : '1px solid var(--border-antique)',
+                      background: paymentMethod === 'RAZORPAY' ? 'var(--crimson-subtle)' : '#FFFFFF',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="RAZORPAY"
+                        checked={paymentMethod === 'RAZORPAY'}
+                        onChange={() => setPaymentMethod('RAZORPAY')}
+                        style={{ accentColor: 'var(--crimson-royal)' }}
+                      />
+                      <div>
+                        <div style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                          <CreditCard size={17} color="var(--crimson-royal)" />
+                          <span>Pay Online via Razorpay (Instant Dispatch)</span>
+                        </div>
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '2px' }}>
+                          UPI (Google Pay, PhonePe, Paytm, CRED), Cards, Netbanking
+                        </div>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--forest-green)', fontWeight: 700, background: 'rgba(36, 88, 57, 0.1)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-xs)' }}>
+                      RECOMMENDED
+                    </span>
+                  </label>
+
+                  {/* Cash on Delivery */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '1.15rem',
                       borderRadius: 'var(--radius-sm)',
                       border: paymentMethod === 'COD' ? '2px solid var(--crimson-royal)' : '1px solid var(--border-antique)',
                       background: paymentMethod === 'COD' ? 'var(--crimson-subtle)' : '#FFFFFF',
@@ -537,48 +751,16 @@ export default function CheckoutPage() {
                         style={{ accentColor: 'var(--crimson-royal)' }}
                       />
                       <div>
-                        <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-                          Cash on Delivery / UPI upon Arrival (COD)
+                        <div style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                          <Banknote size={17} color="var(--terracotta)" />
+                          <span>Cash on Delivery / UPI on Arrival</span>
                         </div>
-                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                          Pay directly to delivery agent via Cash or Google Pay/PhonePe QR
-                        </div>
-                      </div>
-                    </div>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--forest-green)', fontWeight: 700 }}>AVAILABLE</span>
-                  </label>
-
-                  <label
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '1rem',
-                      borderRadius: 'var(--radius-sm)',
-                      border: paymentMethod === 'ONLINE_TEST' ? '2px solid var(--crimson-royal)' : '1px solid var(--border-antique)',
-                      background: paymentMethod === 'ONLINE_TEST' ? 'var(--crimson-subtle)' : '#FFFFFF',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="ONLINE_TEST"
-                        checked={paymentMethod === 'ONLINE_TEST'}
-                        onChange={() => setPaymentMethod('ONLINE_TEST')}
-                        style={{ accentColor: 'var(--crimson-royal)' }}
-                      />
-                      <div>
-                        <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-                          Prepaid / Instant Order Test Mode
-                        </div>
-                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                          Instant mock prepaid confirmation (Ready for Razorpay keys)
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '2px' }}>
+                          Pay with cash or delivery agent QR code at your doorstep
                         </div>
                       </div>
                     </div>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--brass-antique)', fontWeight: 700 }}>INSTANT</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>AVAILABLE</span>
                   </label>
                 </div>
               </div>
@@ -670,17 +852,19 @@ export default function CheckoutPage() {
                   {isSubmitting ? (
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Loader2 size={18} className="animate-spin" />
-                      <span>Confirming Order in Database...</span>
+                      <span>Connecting to Razorpay...</span>
                     </span>
+                  ) : paymentMethod === 'RAZORPAY' ? (
+                    <span>Pay ₹{total} via Razorpay (UPI / Cards)</span>
                   ) : (
-                    <span>Confirm Order • {paymentMethod === 'COD' ? 'Pay ₹' + total + ' on Delivery' : 'Pay ₹' + total}</span>
+                    <span>Confirm Order • Pay ₹{total} on Delivery</span>
                   )}
                 </button>
 
                 <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
                     <ShieldCheck size={14} color="var(--terracotta)" />
-                    <span>Protected by Shatter-Proof Transit Guarantee</span>
+                    <span>Protected by 256-Bit SSL & Shatter-Proof Transit Guarantee</span>
                   </span>
                 </div>
               </div>

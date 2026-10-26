@@ -111,18 +111,8 @@ export default function Header() {
           </div>
 
           {/* Admin link + Bag */}
+          {/* Bag */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Link href="/admin" style={{
-              fontSize: '0.8rem',
-              color: 'var(--text-secondary)',
-              border: '1px solid var(--border-antique)',
-              borderRadius: 'var(--radius-full)',
-              padding: '0.4rem 0.85rem',
-              textDecoration: 'none',
-              background: 'var(--bg-surface)'
-            }}>
-              Fulfillment Admin
-            </Link>
 
             <button
               onClick={() => setIsCartOpen(true)}

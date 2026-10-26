@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS public.orders (
     payment_method TEXT NOT NULL DEFAULT 'COD',
     payment_status TEXT NOT NULL DEFAULT 'pending',
     fulfillment_status TEXT NOT NULL DEFAULT 'unfulfilled',
+    razorpay_payment_id TEXT,
+    razorpay_order_id TEXT,
     meesho_order_ids TEXT,
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL

@@ -43,6 +43,8 @@ export async function saveOrder(order: Order): Promise<{ success: boolean; error
         payment_method: order.paymentMethod,
         payment_status: order.paymentStatus,
         fulfillment_status: order.fulfillmentStatus,
+        razorpay_payment_id: order.razorpayPaymentId || null,
+        razorpay_order_id: order.razorpayOrderId || null,
         meesho_order_ids: order.meeshoOrderIds || null,
         notes: order.notes || null,
         created_at: order.createdAt
@@ -116,6 +118,8 @@ export async function fetchAllOrders(): Promise<Order[]> {
           paymentMethod: row.payment_method,
           paymentStatus: row.payment_status,
           fulfillmentStatus: row.fulfillment_status,
+          razorpayPaymentId: row.razorpay_payment_id,
+          razorpayOrderId: row.razorpay_order_id,
           meeshoOrderIds: row.meesho_order_ids,
           notes: row.notes,
           createdAt: row.created_at,

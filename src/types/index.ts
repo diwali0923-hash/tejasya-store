@@ -61,9 +61,11 @@ export interface Order {
   discount: number;
   shippingFee: number;
   totalAmount: number;
-  paymentMethod: 'COD' | 'ONLINE_TEST';
+  paymentMethod: 'RAZORPAY' | 'COD' | 'ONLINE_TEST';
   paymentStatus: 'pending' | 'completed';
   fulfillmentStatus: 'unfulfilled' | 'ordered_on_meesho' | 'dispatched' | 'delivered';
+  razorpayPaymentId?: string;
+  razorpayOrderId?: string;
   meeshoOrderIds?: string;
   notes?: string;
   createdAt: string;

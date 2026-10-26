@@ -12,14 +12,58 @@ import {
   Package,
   Database,
   ArrowLeft,
-  RefreshCw
+  RefreshCw,
+  Lock,
+  Unlock,
+  KeyRound,
+  AlertCircle,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
+const DEFAULT_ADMIN_PASSCODE = 'tejasya2026';
+
 export default function AdminDashboardPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [enteredPasscode, setEnteredPasscode] = useState('');
+  const [passcodeError, setPasscodeError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [editingNotes, setEditingNotes] = useState<{ [orderId: string]: string }>({});
+
+  // Check session authentication on mount
+  useEffect(() => {
+    const authStatus = sessionStorage.getItem('tejasya_admin_auth');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+      loadOrders();
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  const handlePasscodeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetPasscode = process.env.NEXT_PUBLIC_ADMIN_PASSCODE || DEFAULT_ADMIN_PASSCODE;
+
+    if (enteredPasscode.trim() === targetPasscode.trim()) {
+      sessionStorage.setItem('tejasya_admin_auth', 'true');
+      setIsAuthenticated(true);
+      setPasscodeError(false);
+      loadOrders();
+    } else {
+      setPasscodeError(true);
+    }
+  };
+
+  const handleSignOut = () => {
+    sessionStorage.removeItem('tejasya_admin_auth');
+    setIsAuthenticated(false);
+    setEnteredPasscode('');
+  };
 
   const loadOrders = async () => {
     setLoading(true);
@@ -32,10 +76,6 @@ export default function AdminDashboardPage() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    loadOrders();
-  }, []);
 
   const handleCopyAddress = (order: Order) => {
     const addr = order.shippingAddress;
@@ -65,6 +105,123 @@ Pincode: ${addr.pincode}`;
       loadOrders();
     }
   };
+
+  // 🔒 Render Passcode Gate if not authenticated
+  if (isAuthenticated === false) {
+    return (
+      <div style={{
+        minHeight: '80vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem 1.5rem'
+      }}>
+        <div className="artisan-card" style={{
+          width: '100%',
+          maxWidth: '420px',
+          padding: '2.5rem 2rem',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            background: 'var(--bg-canvas)',
+            border: '1px solid var(--border-antique)',
+            margin: '0 auto 1.25rem auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Lock size={26} color="var(--crimson-royal)" />
+          </div>
+
+          <h1 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 700, marginBottom: '0.5rem' }}>
+            Operations & Fulfillment
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '2rem' }}>
+            Authorized access only. Enter the master passcode to view orders and Meesho routing.
+          </p>
+
+          <form onSubmit={handlePasscodeSubmit}>
+            <div style={{ marginBottom: '1.25rem', position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={enteredPasscode}
+                onChange={(e) => {
+                  setEnteredPasscode(e.target.value);
+                  setPasscodeError(false);
+                }}
+                required
+                placeholder="Enter Passcode"
+                autoFocus
+                style={{
+                  width: '100%',
+                  padding: '0.85rem 2.75rem 0.85rem 1rem',
+                  background: '#FFFFFF',
+                  border: passcodeError ? '2px solid var(--terracotta)' : '1px solid var(--border-antique)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.95rem',
+                  color: 'var(--text-primary)',
+                  letterSpacing: '0.1em'
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            {passcodeError && (
+              <div style={{
+                color: 'var(--terracotta)',
+                fontSize: '0.82rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.4rem'
+              }}>
+                <AlertCircle size={15} />
+                <span>Incorrect passcode. Please try again.</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ width: '100%', padding: '0.95rem', fontSize: '0.95rem' }}
+            >
+              <KeyRound size={17} />
+              <span>Unlock Dashboard</span>
+            </button>
+          </form>
+
+          <div style={{ marginTop: '1.75rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-subtle)' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Tejasya Living • Protected Internal Dispatch Center
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated === null) {
+    return <div style={{ minHeight: '60vh' }} />;
+  }
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
   const unfulfilledCount = orders.filter((o) => o.fulfillmentStatus === 'unfulfilled').length;
@@ -118,10 +275,20 @@ Pincode: ${addr.pincode}`;
               <RefreshCw size={14} />
               <span>Refresh</span>
             </button>
+
+            <button
+              onClick={handleSignOut}
+              className="btn-secondary"
+              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', color: 'var(--terracotta)' }}
+              title="Lock Admin Dashboard"
+            >
+              <Lock size={14} />
+              <span>Lock</span>
+            </button>
           </div>
         </div>
 
-        {/* Analytics Cards */}
+        {/* Analytics Top Cards */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -192,7 +359,7 @@ Pincode: ${addr.pincode}`;
                       border: isUnfulfilled ? '1px solid var(--terracotta)' : '1px solid var(--border-subtle)'
                     }}
                   >
-                    {/* Top row */}
+                    {/* Top Row */}
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -217,7 +384,7 @@ Pincode: ${addr.pincode}`;
                             color: order.paymentMethod === 'COD' ? 'var(--terracotta)' : 'var(--forest-green)',
                             border: `1px solid ${order.paymentMethod === 'COD' ? 'var(--terracotta)' : 'var(--forest-green)'}`
                           }}>
-                            {order.paymentMethod === 'COD' ? 'Cash on Delivery (₹' + order.totalAmount + ')' : 'Paid Online (₹' + order.totalAmount + ')'}
+                            {order.paymentMethod === 'COD' ? 'Cash on Delivery (₹' + order.totalAmount + ')' : 'Paid Online via Razorpay (₹' + order.totalAmount + ')'}
                           </span>
                         </div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>

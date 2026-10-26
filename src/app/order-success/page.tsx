@@ -80,9 +80,6 @@ function OrderSuccessContent() {
             <span>Continue Shopping</span>
             <ArrowRight size={16} />
           </Link>
-          <Link href="/admin" className="btn-secondary">
-            <span>View in Admin Dashboard</span>
-          </Link>
         </div>
       </div>
     </div>
