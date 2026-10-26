@@ -5,169 +5,279 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, Star, Clock, ShieldCheck, CheckCircle2, Sparkles, Truck } from 'lucide-react';
 
 export default function HomePage() {
   const { addToCart } = useCart();
+  const featuredProduct = PRODUCTS[0]; // 66-piece hamper
 
   return (
     <div>
-      {/* 1. HERO SECTION (MINIMALIST EDITORIAL) */}
-      <section style={{
-        position: 'relative',
-        padding: '4rem 0 5rem 0',
-        borderBottom: '1px solid var(--color-border)'
-      }}>
-        <div className="container">
+      {/* 1. FULL-BLEED MOBILE HERO SECTION */}
+      <section className="mobile-hero-wrapper">
+        {/* Full-Bleed Background Image */}
+        <Image
+          src="/images/hero_cover.png"
+          alt="Tejasya Handcrafted Earthen Festive Diyas and Ghee Flame Illumination"
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: 'center' }}
+        />
+
+        {/* Ambient Warm Gradient Overlay */}
+        <div className="hero-overlay" />
+
+        {/* Hero Content Overlay */}
+        <div className="container" style={{ position: 'relative', zIndex: 2, maxWidth: '820px', margin: '0 auto 0 0' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+            <span className="festive-pill-gold">
+              <Sparkles size={13} color="var(--crimson-royal)" />
+              <span>LIMITED DIWALI 2026 EDITION</span>
+            </span>
+          </div>
+
+          <h1 style={{
+            fontSize: 'clamp(2.5rem, 6.5vw, 4.25rem)',
+            lineHeight: 1.08,
+            color: '#FFFFFF',
+            marginBottom: '1.25rem',
+            fontWeight: 800,
+            textShadow: '0 4px 20px rgba(0, 0, 0, 0.6)'
+          }}>
+            Sacred Light, Hand-Sculpted for Your Home
+          </h1>
+
+          <p style={{
+            fontSize: 'clamp(1.05rem, 2.5vw, 1.25rem)',
+            color: '#FDF6E2',
+            lineHeight: 1.55,
+            marginBottom: '2rem',
+            maxWidth: '620px',
+            textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
+          }}>
+            Handcrafted mitti diyas, smokeless jewel gel candles, and grand mandir illumination sets. Bring authentic festive radiance to your home without cheap plastic or toxic soot.
+          </p>
+
+          {/* Factual Dispatch Urgency Badge */}
           <div style={{
+            background: 'rgba(31, 10, 10, 0.85)',
+            border: '1.5px solid var(--gold-radiant)',
+            borderRadius: 'var(--radius-xs)',
+            padding: '0.85rem 1.25rem',
+            marginBottom: '2.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.85rem',
+            maxWidth: '600px',
+            backdropFilter: 'blur(8px)',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)'
+          }}>
+            <Truck size={22} color="var(--gold-bright)" style={{ flexShrink: 0 }} />
+            <div style={{ color: '#FFFFFF', fontSize: '0.88rem', lineHeight: 1.45 }}>
+              <strong style={{ color: '#FFE082', display: 'block' }}>Pre-Dhanteras Dispatch Guarantee:</strong>
+              Dispatches within 24 hours via express air couriers. Every piece encased in bubble cushions.
+            </div>
+          </div>
+
+          {/* Dual Vibrant CTA Buttons */}
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <Link
+              href={`/product/${featuredProduct.slug}`}
+              className="btn-gold"
+              style={{ fontSize: '0.95rem', padding: '1.1rem 2.25rem' }}
+            >
+              <span>Get 66-Piece Hamper — ₹1,499</span>
+              <ArrowRight size={18} />
+            </Link>
+
+            <a
+              href="#collections"
+              className="btn-secondary"
+              style={{
+                color: '#FFFFFF',
+                borderColor: 'rgba(255, 255, 255, 0.6)',
+                background: 'rgba(0, 0, 0, 0.35)',
+                backdropFilter: 'blur(4px)',
+                padding: '1.05rem 1.85rem'
+              }}
+            >
+              <span>Explore All 4 Sets</span>
+            </a>
+          </div>
+
+          {/* Quick Pillars in Warm Gold */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1.5rem',
+            marginTop: '2.5rem',
+            flexWrap: 'wrap',
+            color: '#F5C542',
+            fontSize: '0.82rem',
+            fontWeight: 600,
+            letterSpacing: '0.04em'
+          }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <CheckCircle2 size={16} /> 100% Pure Terracotta Clay
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <CheckCircle2 size={16} /> Smokeless Clean Gel Wax
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <CheckCircle2 size={16} /> Zero-Breakage Assurance
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. FEATURED BESTSELLER SHOWCASE */}
+      <section style={{ padding: '5rem 0', background: 'var(--bg-festive)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 3.5rem auto' }}>
+            <span className="festive-pill-crimson" style={{ marginBottom: '0.75rem' }}>
+              TOP SELLER FOR DIWALI 2026
+            </span>
+            <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 2.85rem)', color: 'var(--crimson-royal)', marginBottom: '0.75rem', fontWeight: 800 }}>
+              The Shubh Deepavali 66-Piece Hamper
+            </h2>
+            <p style={{ color: 'var(--text-body)', fontSize: '1rem', lineHeight: 1.6 }}>
+              A complete ceremonial lighting suite. Combines heritage handpainted earthen diyas with jewel-toned crystal gel candles and safe balcony LED tealights.
+            </p>
+          </div>
+
+          <div className="festive-card" style={{
+            padding: '2rem',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '4rem',
+            gap: '3rem',
             alignItems: 'center'
           }}>
-            {/* Left: Copy */}
-            <div>
-              <div style={{
-                fontSize: '0.75rem',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'var(--color-muted)',
-                marginBottom: '1rem',
-                fontWeight: 600
+            {/* Left: Packshot Image */}
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '1/1',
+              borderRadius: 'var(--radius-xs)',
+              overflow: 'hidden',
+              boxShadow: 'var(--shadow-card)'
+            }}>
+              <Image
+                src="/images/shubh_box.png"
+                alt="The Shubh Deepavali 66-Piece Artisanal Lighting Collection"
+                fill
+                sizes="(max-width: 768px) 100vw, 550px"
+                style={{ objectFit: 'cover' }}
+              />
+              <span style={{
+                position: 'absolute',
+                top: '1rem',
+                left: '1rem',
+                background: 'var(--crimson-royal)',
+                color: '#FFFFFF',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                padding: '0.4rem 0.9rem',
+                borderRadius: 'var(--radius-xs)',
+                letterSpacing: '0.06em'
               }}>
-                Artisanal Festival Illumination
-              </div>
-
-              <h1 style={{
-                fontSize: 'clamp(2.4rem, 5vw, 4rem)',
-                lineHeight: 1.1,
-                color: 'var(--color-dark)',
-                marginBottom: '1.5rem',
-                fontWeight: 500
-              }}>
-                Sacred light, sculpted by hand.
-              </h1>
-
-              <p style={{
-                fontSize: 'clamp(1rem, 2vw, 1.15rem)',
-                color: 'var(--color-muted)',
-                lineHeight: 1.6,
-                marginBottom: '2.5rem',
-                maxWidth: '520px'
-              }}>
-                Hand-thrown terracotta deepaks, jewel-toned clean-burning candles, and complete mandir collections. Crafted for homes that appreciate quiet sacred luxury.
-              </p>
-
-              {/* Factual Dispatch Notice (No filler badges) */}
-              <div style={{
-                borderLeft: '2px solid var(--color-dark)',
-                paddingLeft: '1rem',
-                marginBottom: '2.5rem',
-                fontSize: '0.85rem',
-                color: 'var(--color-dark)',
-                lineHeight: 1.5
-              }}>
-                <strong>Diwali Rush Guarantee:</strong> Orders dispatch within 24 hours via express couriers. Each piece is encased in multi-layer bubble cushioning for zero transit damage.
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <a href="#collections" className="btn-primary">
-                  <span>Explore Collections</span>
-                  <ArrowRight size={16} />
-                </a>
-              </div>
+                SAVE 55% TODAY
+              </span>
             </div>
 
-            {/* Right: Featured Hamper */}
+            {/* Right: Breakdown & Value */}
             <div>
-              <div
-                className="editorial-card"
-                style={{
-                  position: 'relative',
-                  overflow: 'hidden',
-                  padding: '1rem'
-                }}
-              >
-                <div style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '1/1',
-                  overflow: 'hidden'
-                }}>
-                  <Image
-                    src="/images/shubh_box.png"
-                    alt="The Shubh Deepavali 66-Piece Artisanal Lighting Collection"
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 550px"
-                    style={{ objectFit: 'cover' }}
-                  />
-                  <span style={{
-                    position: 'absolute',
-                    top: '1rem',
-                    right: '1rem',
-                    background: 'var(--color-dark)',
-                    color: 'var(--color-light)',
-                    padding: '0.35rem 0.75rem',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase'
-                  }}>
-                    Featured Set
-                  </span>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#D4AF37', marginBottom: '0.75rem', fontSize: '0.9rem' }}>
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={16} fill="currentColor" />
+                ))}
+                <span style={{ fontWeight: 800, color: 'var(--text-dark)', marginLeft: '0.25rem' }}>4.9</span>
+                <span style={{ color: 'var(--text-muted)' }}>(384 Verified Reviews)</span>
+              </div>
 
-                <div style={{ padding: '1.25rem 0.5rem 0.5rem 0.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--color-dark)' }}>The Shubh Deepavali 66-Piece Set</h3>
-                    <div>
-                      <span style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--color-dark)' }}>₹1,499</span>
-                      <span style={{ fontSize: '0.9rem', color: 'var(--color-muted)', textDecoration: 'line-through', marginLeft: '0.5rem' }}>₹3,299</span>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--color-muted)', marginBottom: '1.25rem' }}>
-                    24 Handpainted Diyas, 12 Jewel Glass Gel Candles, and 30 Smokeless LED Tealights
-                  </p>
-                  <button
-                    onClick={() => addToCart(PRODUCTS[0])}
-                    className="btn-primary"
-                    style={{ width: '100%', padding: '0.9rem' }}
-                  >
-                    <span>Add to Bag</span>
-                  </button>
-                </div>
+              <h3 style={{ fontSize: '1.85rem', color: 'var(--text-dark)', marginBottom: '0.75rem', fontWeight: 800 }}>
+                Everything You Need for Diwali Night
+              </h3>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'baseline',
+                gap: '1rem',
+                padding: '1.25rem 0',
+                borderTop: '1px solid var(--border-subtle)',
+                borderBottom: '1px solid var(--border-subtle)',
+                marginBottom: '1.75rem'
+              }}>
+                <span style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--crimson-royal)' }}>
+                  ₹1,499
+                </span>
+                <span style={{ fontSize: '1.25rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
+                  ₹3,299
+                </span>
+                <span style={{
+                  background: 'rgba(139, 24, 24, 0.1)',
+                  color: 'var(--crimson-royal)',
+                  padding: '0.3rem 0.75rem',
+                  borderRadius: 'var(--radius-xs)',
+                  fontWeight: 700,
+                  fontSize: '0.85rem'
+                }}>
+                  You Save ₹1,800
+                </span>
+              </div>
+
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
+                  <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
+                  <span><strong>24 Handpainted Mitti Diyas</strong> with raised gold filigree borders</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
+                  <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
+                  <span><strong>12 Jewel-Toned Glass Gel Candles</strong> (100% Smokeless & Long-burning)</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
+                  <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
+                  <span><strong>30 Warm-Glow LED Tealights</strong> for wind-prone balconies & flower rangolis</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
+                  <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
+                  <span><strong>Complimentary Cotton Wicks</strong> included in the box</span>
+                </li>
+              </ul>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <button
+                  onClick={() => addToCart(featuredProduct)}
+                  className="btn-secondary"
+                  style={{ width: '100%', padding: '1rem', fontSize: '0.9rem' }}
+                >
+                  Add to Bag
+                </button>
+                <Link
+                  href={`/product/${featuredProduct.slug}`}
+                  className="btn-primary"
+                  style={{ width: '100%', padding: '1rem', fontSize: '0.9rem', textAlign: 'center' }}
+                >
+                  <span>Buy Now — ₹1,499</span>
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. THE 4 PRODUCTS CATALOG */}
-      <section id="collections" style={{ padding: '5rem 0' }}>
+      {/* 3. ALL 4 CURATED OFFERINGS GRID */}
+      <section id="collections" style={{ padding: '5rem 0', background: 'var(--bg-surface)' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 3.5rem auto' }}>
-            <span style={{
-              fontSize: '0.75rem',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: 'var(--color-muted)',
-              display: 'block',
-              marginBottom: '0.75rem',
-              fontWeight: 600
-            }}>
-              Curated Edition
+          <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 3.5rem auto' }}>
+            <span className="festive-pill-gold" style={{ marginBottom: '0.75rem' }}>
+              OUR 4 CURATED COLLECTIONS
             </span>
-            <h2 style={{
-              fontSize: 'clamp(1.8rem, 4vw, 2.75rem)',
-              color: 'var(--color-dark)',
-              marginBottom: '0.75rem',
-              fontWeight: 500
-            }}>
-              The 2026 Collection
+            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: 'var(--text-dark)', marginBottom: '0.75rem', fontWeight: 800 }}>
+              Handcrafted for Dhanteras & Deepavali
             </h2>
-            <p style={{ color: 'var(--color-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>
-              Crafted in collaboration with rural pottery artisans. Wrapped in shock-absorbing bubble air cushions to guarantee flawless arrival.
+            <p style={{ color: 'var(--text-body)', fontSize: '1rem', lineHeight: 1.6 }}>
+              Directly sourced from generational pottery clusters. Every parcel is dispatched in shock-resistant bubble air cushions for guaranteed safe arrival.
             </p>
           </div>
 
@@ -179,7 +289,7 @@ export default function HomePage() {
             {PRODUCTS.map((product) => (
               <div
                 key={product.id}
-                className="editorial-card"
+                className="festive-card"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -200,34 +310,33 @@ export default function HomePage() {
                     src={product.images[0]}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 768px) 100vw, 300px"
+                    sizes="(max-width: 768px) 100vw, 320px"
                     style={{ objectFit: 'cover' }}
                   />
                   <span style={{
                     position: 'absolute',
                     top: '0.75rem',
                     left: '0.75rem',
-                    background: 'var(--color-surface)',
-                    border: '1px solid var(--color-border)',
-                    color: 'var(--color-dark)',
-                    fontSize: '0.7rem',
-                    fontWeight: 600,
-                    padding: '0.25rem 0.65rem',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase'
+                    background: 'var(--crimson-royal)',
+                    color: '#FFFFFF',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    padding: '0.3rem 0.75rem',
+                    borderRadius: 'var(--radius-xs)',
+                    letterSpacing: '0.04em'
                   }}>
-                    {product.category === 'bundle' ? 'Grand Set' : product.category}
+                    SAVE {product.discountPercentage}%
                   </span>
                 </Link>
 
-                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--color-dark)' }}>
-                      <Star size={13} fill="currentColor" />
-                      <span style={{ fontWeight: 600 }}>{product.rating}</span>
-                      <span style={{ color: 'var(--color-muted)' }}>({product.reviewCount})</span>
+                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontSize: '0.82rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#D4AF37' }}>
+                      <Star size={14} fill="currentColor" />
+                      <span style={{ fontWeight: 800, color: 'var(--text-dark)' }}>{product.rating}</span>
+                      <span style={{ color: 'var(--text-muted)' }}>({product.reviewCount})</span>
                     </div>
-                    <span style={{ color: 'var(--color-muted)', fontWeight: 500 }}>
+                    <span style={{ color: 'var(--crimson-royal)', fontWeight: 700, fontSize: '0.82rem' }}>
                       {product.piecesCount} Pieces
                     </span>
                   </div>
@@ -235,22 +344,22 @@ export default function HomePage() {
                   <Link
                     href={`/product/${product.slug}`}
                     style={{
-                      color: 'var(--color-dark)',
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
+                      color: 'var(--text-dark)',
+                      fontSize: '1.15rem',
+                      fontWeight: 700,
                       marginBottom: '0.5rem',
                       textDecoration: 'none',
-                      lineHeight: 1.3
+                      lineHeight: 1.35
                     }}
                   >
                     {product.name}
                   </Link>
 
                   <p style={{
-                    fontSize: '0.82rem',
-                    color: 'var(--color-muted)',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-muted)',
                     lineHeight: 1.5,
-                    marginBottom: '1rem',
+                    marginBottom: '1.25rem',
                     display: '-webkit-box',
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',
@@ -259,34 +368,31 @@ export default function HomePage() {
                     {product.tagline}
                   </p>
 
-                  <div style={{ marginTop: 'auto' }}>
+                  <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)' }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.65rem', marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '1.45rem', fontWeight: 700, color: 'var(--color-dark)' }}>
+                      <span style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--crimson-royal)' }}>
                         ₹{product.price}
                       </span>
-                      <span style={{ fontSize: '0.9rem', color: 'var(--color-muted)', textDecoration: 'line-through' }}>
+                      <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
                         ₹{product.originalPrice}
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--color-dark)', fontWeight: 600, letterSpacing: '0.05em' }}>
-                        Free Express Shipping
                       </span>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                      <Link
-                        href={`/product/${product.slug}`}
-                        className="btn-secondary"
-                        style={{ padding: '0.65rem 0.5rem', fontSize: '0.78rem' }}
-                      >
-                        Details
-                      </Link>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                       <button
                         onClick={() => addToCart(product)}
-                        className="btn-primary"
-                        style={{ padding: '0.65rem 0.5rem', fontSize: '0.78rem' }}
+                        className="btn-secondary"
+                        style={{ padding: '0.75rem', fontSize: '0.82rem' }}
                       >
                         Add to Bag
                       </button>
+                      <Link
+                        href={`/product/${product.slug}`}
+                        className="btn-primary"
+                        style={{ padding: '0.75rem', fontSize: '0.82rem', textAlign: 'center' }}
+                      >
+                        <span>Buy Now</span>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -296,61 +402,61 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. CRAFT & INTEGRITY (CONCISE, NO FILLER) */}
-      <section id="why-tejasya" style={{
+      {/* 4. ARTISAN CRAFT & MATERIAL SANCTITY */}
+      <section style={{
         padding: '5rem 0',
-        background: 'var(--color-surface)',
-        borderTop: '1px solid var(--color-border)',
-        borderBottom: '1px solid var(--color-border)'
+        background: 'var(--bg-surface-warm)',
+        borderTop: '1px solid var(--border-subtle)',
+        borderBottom: '1px solid var(--border-subtle)'
       }}>
         <div className="container">
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '3rem'
           }}>
             <div>
-              <span style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-muted)', display: 'block', marginBottom: '0.75rem' }}>
-                01 • Material Sanctity
+              <span style={{ fontSize: '0.78rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--crimson-royal)', fontWeight: 800, display: 'block', marginBottom: '0.75rem' }}>
+                01 • RURAL POTTERY CLUSTERS
               </span>
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--color-dark)', marginBottom: '0.5rem' }}>Generational Clay Potter Clusters</h3>
-              <p style={{ color: 'var(--color-muted)', fontSize: '0.85rem', lineHeight: 1.6 }}>
-                Every earthen diya is hand-thrown on wheels and kiln-fired by artisanal pottery families across Rajasthan and Uttar Pradesh.
+              <h3 style={{ fontSize: '1.3rem', color: 'var(--text-dark)', marginBottom: '0.5rem', fontWeight: 700 }}>Hand-Pressed Terracotta Clay</h3>
+              <p style={{ color: 'var(--text-body)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                Every single diya is hand-thrown on potters&apos; wheels using pure earthen clay, sun-dried, and kiln-fired to withstand long burning hours with natural ghee and mustard oil.
               </p>
             </div>
 
             <div>
-              <span style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-muted)', display: 'block', marginBottom: '0.75rem' }}>
-                02 • Modern Interior Care
+              <span style={{ fontSize: '0.78rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--crimson-royal)', fontWeight: 800, display: 'block', marginBottom: '0.75rem' }}>
+                02 • APARTMENT CEILING CARE
               </span>
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--color-dark)', marginBottom: '0.5rem' }}>100% Smokeless Crystal Gel</h3>
-              <p style={{ color: 'var(--color-muted)', fontSize: '0.85rem', lineHeight: 1.6 }}>
-                Formulated with high-clarity translucent wax that burns without soot or black smoke, keeping apartment ceilings and interior walls pristine.
+              <h3 style={{ fontSize: '1.3rem', color: 'var(--text-dark)', marginBottom: '0.5rem', fontWeight: 700 }}>100% Smokeless Crystal Gel</h3>
+              <p style={{ color: 'var(--text-body)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                Formulated with high-clarity translucent jelly gel wax that burns soot-free. Safe for modern indoor living rooms, dining tables, and mandir alcoves without wall discoloration.
               </p>
             </div>
 
             <div>
-              <span style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-muted)', display: 'block', marginBottom: '0.75rem' }}>
-                03 • Safe Logistics
+              <span style={{ fontSize: '0.78rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--crimson-royal)', fontWeight: 800, display: 'block', marginBottom: '0.75rem' }}>
+                03 • ZERO HEARTBREAK GUARANTEE
               </span>
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--color-dark)', marginBottom: '0.5rem' }}>Reinforced Bubble Cushioning</h3>
-              <p style={{ color: 'var(--color-muted)', fontSize: '0.85rem', lineHeight: 1.6 }}>
-                Earthen pottery and glass are encased in shock-absorbing air cushions. In the rare event of transit breakage, we dispatch immediate replacements.
+              <h3 style={{ fontSize: '1.3rem', color: 'var(--text-dark)', marginBottom: '0.5rem', fontWeight: 700 }}>Reinforced Bubble Encasement</h3>
+              <p style={{ color: 'var(--text-body)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                Earthen pottery and glassware are protected by multi-layer cellular foam cushions. If any piece chips during courier transit, we immediately dispatch a replacement parcel.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. VERIFIED CLIENT REVIEWS */}
-      <section style={{ padding: '5rem 0' }}>
+      {/* 5. VERIFIED CLIENT REVIEWS */}
+      <section style={{ padding: '5rem 0', background: 'var(--bg-surface)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <span style={{ fontSize: '0.75rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--color-muted)', display: 'block', marginBottom: '0.75rem' }}>
-              Verified Client Notes
+            <span className="festive-pill-gold" style={{ marginBottom: '0.75rem' }}>
+              VERIFIED BUYER EXPERIENCES
             </span>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', color: 'var(--color-dark)', fontWeight: 500 }}>
-              Illuminating Spaces Across India
+            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: 'var(--text-dark)', fontWeight: 800 }}>
+              Illuminating Homes Across India
             </h2>
           </div>
 
@@ -359,44 +465,44 @@ export default function HomePage() {
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '2rem'
           }}>
-            <div className="editorial-card" style={{ padding: '2rem' }}>
-              <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--color-dark)', marginBottom: '1rem' }}>
+            <div className="festive-card" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', gap: '0.25rem', color: '#D4AF37', marginBottom: '1rem' }}>
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} fill="currentColor" />
+                  <Star key={i} size={15} fill="currentColor" />
                 ))}
               </div>
-              <p style={{ color: 'var(--color-dark)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.25rem', fontStyle: 'italic' }}>
-                &ldquo;Ordered the 66-Piece Shubh Deepavali set for my Gurgaon apartment. The gel candles looked like glowing jewels during Lakshmi Pooja, and not a single piece chipped in transit.&rdquo;
+              <p style={{ color: 'var(--text-dark)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.25rem', fontStyle: 'italic' }}>
+                &ldquo;Ordered the 66-Piece Shubh Deepavali set for my Gurgaon flat. The gel candles looked like glowing jewels during Lakshmi Pooja, and every single diya arrived intact.&rdquo;
               </p>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--crimson-royal)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Pooja Sharma • Gurgaon
               </div>
             </div>
 
-            <div className="editorial-card" style={{ padding: '2rem' }}>
-              <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--color-dark)', marginBottom: '1rem' }}>
+            <div className="festive-card" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', gap: '0.25rem', color: '#D4AF37', marginBottom: '1rem' }}>
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} fill="currentColor" />
+                  <Star key={i} size={15} fill="currentColor" />
                 ))}
               </div>
-              <p style={{ color: 'var(--color-dark)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.25rem', fontStyle: 'italic' }}>
-                &ldquo;The handpainted mitti diyas with gold borders are so stunning. My balcony looked like a royal courtyard. Appreciated the cotton wicks included in the box.&rdquo;
+              <p style={{ color: 'var(--text-dark)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.25rem', fontStyle: 'italic' }}>
+                &ldquo;The handpainted mitti diyas with gold borders are so stunning. My balcony looked like a royal temple courtyard. Loved the included cotton wicks.&rdquo;
               </p>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--crimson-royal)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Aditya Kulkarni • Pune
               </div>
             </div>
 
-            <div className="editorial-card" style={{ padding: '2rem' }}>
-              <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--color-dark)', marginBottom: '1rem' }}>
+            <div className="festive-card" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', gap: '0.25rem', color: '#D4AF37', marginBottom: '1rem' }}>
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} fill="currentColor" />
+                  <Star key={i} size={15} fill="currentColor" />
                 ))}
               </div>
-              <p style={{ color: 'var(--color-dark)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.25rem', fontStyle: 'italic' }}>
-                &ldquo;The 112-Piece Mandir Kit was an absolute lifesaver. On Diwali night we usually run out of oil diyas. This covered our entrance, living room, and rangoli with ease.&rdquo;
+              <p style={{ color: 'var(--text-dark)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.25rem', fontStyle: 'italic' }}>
+                &ldquo;The 112-Piece Mandir Kit was a lifesaver. On Diwali night we usually run out of oil diyas. This covered our main entrance, flower rangoli, and living room effortlessly.&rdquo;
               </p>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--crimson-royal)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Meera Nambiar • Bengaluru
               </div>
             </div>
@@ -404,18 +510,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. STICKY MOBILE CTA */}
+      {/* 6. STICKY MOBILE CTA */}
       <div className="sticky-mobile-cta">
         <div>
-          <span style={{ fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-muted)', display: 'block' }}>
-            Diwali Edition
+          <span style={{ fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--crimson-royal)', display: 'block', fontWeight: 700 }}>
+            DIWALI LIMITED EDITION
           </span>
-          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-dark)' }}>
-            From ₹499 • Free Express Delivery
+          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-dark)' }}>
+            From ₹499 • Free Delivery
           </span>
         </div>
-        <a href="#collections" className="btn-primary" style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}>
-          <span>Shop</span>
+        <a href="#collections" className="btn-primary" style={{ padding: '0.75rem 1.35rem', fontSize: '0.85rem' }}>
+          <span>Shop Now</span>
         </a>
       </div>
     </div>

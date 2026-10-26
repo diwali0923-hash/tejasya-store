@@ -1,23 +1,24 @@
 import type { Metadata } from 'next';
-import { Cinzel, Plus_Jakarta_Sans } from 'next/font/google';
+import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import Header from '@/components/Header';
 import CartDrawer from '@/components/CartDrawer';
 import Footer from '@/components/Footer';
 
-const cinzel = Cinzel({
+const playfair = Playfair_Display({
   variable: '--font-display',
   subsets: ['latin'],
   display: 'swap',
-  weight: ['500', '600', '700', '800']
+  weight: ['400', '600', '700', '800', '900'],
+  style: ['normal', 'italic']
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: '--font-body',
   subsets: ['latin'],
   display: 'swap',
-  weight: ['400', '500', '600', '700']
+  weight: ['400', '500', '600', '700', '800']
 });
 
 export const metadata: Metadata = {
@@ -50,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${plusJakarta.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${plusJakarta.variable}`}>
       <body>
         <CartProvider>
           <Header />

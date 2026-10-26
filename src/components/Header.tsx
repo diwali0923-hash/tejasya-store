@@ -10,25 +10,29 @@ export default function Header() {
 
   return (
     <>
-      {/* Top Banner (Strict Editorial) */}
+      {/* Top Banner (Festive Crimson & Gold Urgency) */}
       <div style={{
-        background: 'var(--color-dark)',
-        color: 'var(--color-light)',
-        padding: '0.45rem 1rem',
-        fontSize: '0.75rem',
+        background: 'linear-gradient(90deg, #660E0E 0%, #8B1818 50%, #660E0E 100%)',
+        color: '#FFFFFF',
+        padding: '0.55rem 1rem',
+        fontSize: '0.78rem',
         textAlign: 'center',
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '0.75rem',
+        gap: '0.85rem',
         flexWrap: 'wrap',
-        fontWeight: 500
+        fontWeight: 600,
+        borderBottom: '1px solid rgba(212, 175, 55, 0.4)'
       }}>
-        <span>Diwali Delivery Guarantee: Orders placed today arrive before Dhanteras</span>
-        <span style={{ opacity: 0.5 }}>|</span>
-        <span>Use Code <strong>SHUBH300</strong> for INR 300 Off</span>
+        <span style={{ color: '#FFE082' }}>PRE-DHANTERAS DISPATCH GUARANTEE</span>
+        <span style={{ opacity: 0.5, color: '#D4AF37' }}>•</span>
+        <span>Orders Dispatch in 24 Hours with Free Express Delivery Across India</span>
+        <span style={{ opacity: 0.5, color: '#D4AF37' }}>•</span>
+        <span style={{ background: 'rgba(212, 175, 55, 0.2)', border: '1px solid #D4AF37', padding: '0.1rem 0.5rem', borderRadius: '3px', color: '#FFF' }}>
+          Code SHUBH300 Applied
+        </span>
       </div>
 
       {/* Main Header */}
@@ -36,39 +40,40 @@ export default function Header() {
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'rgba(247, 244, 238, 0.95)',
-        backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid var(--color-border)'
+        background: 'rgba(250, 246, 239, 0.96)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1.5px solid var(--border-subtle)',
+        boxShadow: '0 4px 20px rgba(31, 10, 10, 0.04)'
       }}>
         <div className="container" style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '4.5rem'
+          height: '4.75rem'
         }}>
           {/* Logo */}
           <Link href="/" style={{ textDecoration: 'none' }}>
             <span style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '1.75rem',
-              fontWeight: 600,
-              letterSpacing: '0.18em',
-              color: 'var(--color-dark)',
+              fontSize: '2rem',
+              fontWeight: 800,
+              letterSpacing: '0.14em',
+              color: 'var(--crimson-royal)',
               display: 'block',
               lineHeight: 1
             }}>
               TEJASYA
             </span>
             <span style={{
-              fontSize: '0.62rem',
-              letterSpacing: '0.25em',
-              color: 'var(--color-muted)',
+              fontSize: '0.64rem',
+              letterSpacing: '0.22em',
+              color: 'var(--gold-warm)',
               textTransform: 'uppercase',
               display: 'block',
-              marginTop: '4px',
-              fontWeight: 500
+              marginTop: '5px',
+              fontWeight: 700
             }}>
-              Light & Form • Edition 2026
+              Artisanal Deepavali Illumination
             </span>
           </Link>
 
@@ -77,31 +82,33 @@ export default function Header() {
             <button
               onClick={() => setIsCartOpen(true)}
               style={{
-                background: 'transparent',
-                border: '1px solid var(--color-dark)',
-                color: 'var(--color-dark)',
-                padding: '0.5rem 1.15rem',
+                background: 'var(--bg-surface)',
+                border: '1.5px solid var(--crimson-royal)',
+                color: 'var(--crimson-royal)',
+                padding: '0.55rem 1.25rem',
                 borderRadius: 'var(--radius-xs)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.6rem',
                 cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '0.8rem',
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase'
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+                boxShadow: 'var(--shadow-subtle)',
+                transition: 'all 0.2s ease'
               }}
             >
-              <ShoppingBag size={15} />
+              <ShoppingBag size={16} strokeWidth={2.2} />
               <span>Bag</span>
               {totalItems > 0 && (
                 <span style={{
-                  background: 'var(--color-dark)',
-                  color: 'var(--color-light)',
+                  background: 'var(--crimson-royal)',
+                  color: '#FFFFFF',
                   fontSize: '0.72rem',
-                  fontWeight: 700,
-                  width: '18px',
-                  height: '18px',
+                  fontWeight: 800,
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',

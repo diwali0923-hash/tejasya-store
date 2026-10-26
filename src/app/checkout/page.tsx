@@ -375,25 +375,25 @@ export default function CheckoutPage() {
         </div>
 
         <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.2rem)', color: 'var(--color-dark)', fontWeight: 500, marginBottom: '0.35rem', letterSpacing: '0.03em' }}>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)', color: 'var(--crimson-royal)', fontWeight: 800, marginBottom: '0.35rem' }}>
             Express Delivery Checkout
           </h1>
-          <p style={{ color: 'var(--color-muted)', fontSize: '0.88rem' }}>
-            Provide complete doorstep delivery details to ensure uninterrupted courier transit.
+          <p style={{ color: 'var(--text-body)', fontSize: '0.92rem' }}>
+            Enter your doorstep delivery details to ensure pre-Dhanteras courier transit.
           </p>
         </div>
 
         {errorMsg && (
           <div style={{
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-dark)',
+            background: 'var(--bg-surface)',
+            border: '1.5px solid var(--crimson-royal)',
             borderRadius: 'var(--radius-xs)',
             padding: '1rem',
             marginBottom: '1.5rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
-            color: 'var(--color-dark)',
+            color: 'var(--crimson-royal)',
             fontSize: '0.88rem'
           }}>
             <AlertCircle size={18} style={{ flexShrink: 0 }} />
@@ -410,10 +410,10 @@ export default function CheckoutPage() {
           }}>
             {/* Left: Address & Payment */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              <div className="editorial-card" style={{ padding: '1.75rem' }}>
+              <div className="festive-card" style={{ padding: '1.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <h3 style={{ color: 'var(--color-dark)', fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
-                    <MapPin size={17} color="var(--color-dark)" />
+                  <h3 style={{ color: 'var(--text-dark)', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800 }}>
+                    <MapPin size={18} color="var(--crimson-royal)" />
                     <span>Doorstep Delivery Address</span>
                   </h3>
 
@@ -779,8 +779,8 @@ export default function CheckoutPage() {
 
             {/* Right: Summary */}
             <div>
-              <div className="artisan-card" style={{ padding: '1.75rem' }}>
-                <h3 style={{ color: 'var(--text-primary)', fontSize: '1.15rem', marginBottom: '1.25rem' }}>
+              <div className="festive-card" style={{ padding: '1.75rem' }}>
+                <h3 style={{ color: 'var(--text-dark)', fontSize: '1.2rem', marginBottom: '1.25rem', fontWeight: 800 }}>
                   Order Summary ({items.length} {items.length === 1 ? 'item' : 'items'})
                 </h3>
 
