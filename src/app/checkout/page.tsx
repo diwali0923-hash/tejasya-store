@@ -63,7 +63,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // 📍 HTML5 Geolocation + Reverse Geocoding
+  // HTML5 Geolocation + Reverse Geocoding
   const handleUseCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert('Geolocation is not supported by your browser');
@@ -90,11 +90,11 @@ export default function CheckoutPage() {
               state: addr.state || prev.state,
               roadAreaColony: [addr.suburb, addr.neighbourhood, addr.road].filter(Boolean).join(', ') || prev.roadAreaColony
             }));
-            setLocationSuccessMsg('📍 Location detected! Pincode, City & State auto-filled.');
+            setLocationSuccessMsg('Location detected: Pincode, City and State auto-filled.');
           }
         } catch (err) {
           console.error('Failed to reverse geocode', err);
-          setLocationSuccessMsg('📍 Coordinates found. Please confirm City and Pincode.');
+          setLocationSuccessMsg('Coordinates detected. Please verify City and Pincode.');
         } finally {
           setIsLocating(false);
         }
@@ -341,50 +341,62 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="container" style={{ padding: '6rem 1rem', textAlign: 'center' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🪔</div>
-        <h2 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Your bag is empty</h2>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-          Please add a festive collection to your bag before proceeding to checkout.
+        <div style={{
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          border: '1px solid var(--color-border)',
+          margin: '0 auto 1.25rem auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'var(--color-dark)'
+        }}>
+          <Tag size={24} strokeWidth={1.5} />
+        </div>
+        <h2 style={{ color: 'var(--color-dark)', marginBottom: '0.5rem', fontWeight: 500 }}>Your bag is empty</h2>
+        <p style={{ color: 'var(--color-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+          Please add a collection to your bag before proceeding to checkout.
         </p>
         <Link href="/" className="btn-primary">
-          Return to Collections
+          Return to Catalog
         </Link>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '2rem 0 5rem 0' }}>
+    <div style={{ padding: '2.5rem 0 5rem 0' }}>
       <div className="container" style={{ maxWidth: '1060px' }}>
         <div style={{ marginBottom: '1.5rem' }}>
-          <Link href="/" style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}>
-            <ArrowLeft size={15} /> Back to Store
+          <Link href="/" style={{ color: 'var(--color-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', textDecoration: 'none' }}>
+            <ArrowLeft size={14} /> Return to Store
           </Link>
         </div>
 
         <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.2rem)', color: 'var(--text-primary)', fontWeight: 700, marginBottom: '0.35rem' }}>
-            Express Delivery <span style={{ color: 'var(--crimson-royal)', fontStyle: 'italic' }}>Checkout</span>
+          <h1 style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.2rem)', color: 'var(--color-dark)', fontWeight: 500, marginBottom: '0.35rem', letterSpacing: '0.03em' }}>
+            Express Delivery Checkout
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-            Enter your exact address to ensure doorstep delivery before Dhanteras.
+          <p style={{ color: 'var(--color-muted)', fontSize: '0.88rem' }}>
+            Provide complete doorstep delivery details to ensure uninterrupted courier transit.
           </p>
         </div>
 
         {errorMsg && (
           <div style={{
-            background: 'var(--terracotta-soft)',
-            border: '1px solid var(--terracotta)',
-            borderRadius: 'var(--radius-sm)',
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-dark)',
+            borderRadius: 'var(--radius-xs)',
             padding: '1rem',
             marginBottom: '1.5rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
-            color: 'var(--terracotta)',
-            fontSize: '0.9rem'
+            color: 'var(--color-dark)',
+            fontSize: '0.88rem'
           }}>
-            <AlertCircle size={20} style={{ flexShrink: 0 }} />
+            <AlertCircle size={18} style={{ flexShrink: 0 }} />
             <span>{errorMsg}</span>
           </div>
         )}
@@ -398,10 +410,10 @@ export default function CheckoutPage() {
           }}>
             {/* Left: Address & Payment */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              <div className="artisan-card" style={{ padding: '1.75rem' }}>
+              <div className="editorial-card" style={{ padding: '1.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <h3 style={{ color: 'var(--text-primary)', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <MapPin size={18} color="var(--terracotta)" />
+                  <h3 style={{ color: 'var(--color-dark)', fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                    <MapPin size={17} color="var(--color-dark)" />
                     <span>Doorstep Delivery Address</span>
                   </h3>
 
@@ -410,22 +422,21 @@ export default function CheckoutPage() {
                     onClick={handleUseCurrentLocation}
                     disabled={isLocating}
                     style={{
-                      background: 'var(--bg-canvas)',
-                      border: '1px solid var(--border-antique)',
-                      color: 'var(--text-primary)',
+                      background: 'var(--color-light)',
+                      border: '1px solid var(--color-border)',
+                      color: 'var(--color-dark)',
                       padding: '0.45rem 0.95rem',
-                      borderRadius: 'var(--radius-full)',
+                      borderRadius: 'var(--radius-xs)',
                       fontSize: '0.78rem',
                       fontWeight: 600,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.45rem',
-                      boxShadow: 'var(--shadow-soft)'
+                      gap: '0.45rem'
                     }}
                   >
-                    {isLocating ? <Loader2 size={13} className="animate-spin" /> : <MapPin size={13} color="var(--crimson-royal)" />}
-                    <span>{isLocating ? 'Detecting Location...' : '📍 Use My Current Location'}</span>
+                    {isLocating ? <Loader2 size={13} className="animate-spin" /> : <MapPin size={13} color="var(--color-dark)" />}
+                    <span>{isLocating ? 'Detecting Location...' : 'Use My Current Location'}</span>
                   </button>
                 </div>
 

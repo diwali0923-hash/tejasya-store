@@ -37,29 +37,29 @@ export default function CartDrawer() {
       <div style={{
         width: '100%',
         maxWidth: '460px',
-        background: '#FAF7F2',
-        borderLeft: '1px solid var(--border-antique)',
+        background: 'var(--color-light)',
+        borderLeft: '1px solid var(--color-border)',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.2)',
+        boxShadow: '-10px 0 40px rgba(18, 16, 14, 0.1)',
         overflowY: 'auto'
       }}>
         {/* Header */}
         <div style={{
           padding: '1.25rem 1.5rem',
-          borderBottom: '1px solid var(--border-subtle)',
+          borderBottom: '1px solid var(--color-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#FFFFFF'
+          background: 'var(--color-surface)'
         }}>
           <div>
-            <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>Your Festive Bag</span>
-              <span style={{ fontSize: '0.85rem', color: 'var(--crimson-royal)', fontWeight: 600 }}>({items.length})</span>
+            <h3 style={{ fontSize: '1.15rem', color: 'var(--color-dark)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500, letterSpacing: '0.04em' }}>
+              <span>Cart</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--color-muted)', fontWeight: 400 }}>({items.length})</span>
             </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Free Pan-India Express Delivery</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-muted)' }}>Complimentary Express Courier</span>
           </div>
 
           <button
@@ -83,13 +83,25 @@ export default function CartDrawer() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem 1.5rem' }}>
           {items.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🪔</div>
-              <h4 style={{ color: 'var(--text-primary)', fontSize: '1.1rem', marginBottom: '0.5rem' }}>Your bag is empty</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                Bring home the sacred radiance of handcrafted diyas and jewel candles.
+              <div style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                border: '1px solid var(--color-border)',
+                margin: '0 auto 1.25rem auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--color-dark)'
+              }}>
+                <Tag size={24} strokeWidth={1.5} />
+              </div>
+              <h4 style={{ color: 'var(--color-dark)', fontSize: '1.05rem', marginBottom: '0.5rem', fontWeight: 500, letterSpacing: '0.04em' }}>Your Bag is Empty</h4>
+              <p style={{ color: 'var(--color-muted)', fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                Select a collection from our catalog to begin your festive preparation.
               </p>
               <button onClick={() => setIsCartOpen(false)} className="btn-primary">
-                Explore Curated Collections
+                View Catalog
               </button>
             </div>
           ) : (
@@ -202,17 +214,17 @@ export default function CartDrawer() {
               ))}
 
               <div style={{
-                background: '#FFFFFF',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
+                background: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-xs)',
                 padding: '0.75rem 1rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.65rem'
               }}>
-                <ShieldCheck size={20} color="var(--terracotta)" style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
-                  <strong>Shatter-Proof Guarantee:</strong> Every piece is encased in shock-proof bubble air cushions. Free replacement if damaged in transit.
+                <ShieldCheck size={18} color="var(--color-dark)" style={{ flexShrink: 0 }} />
+                <span style={{ fontSize: '0.8rem', color: 'var(--color-muted)', lineHeight: 1.4 }}>
+                  Dispatched in custom cellular foam cushioning to ensure arrival in pristine condition.
                 </span>
               </div>
             </div>
@@ -223,54 +235,54 @@ export default function CartDrawer() {
         {items.length > 0 && (
           <div style={{
             padding: '1.25rem 1.5rem',
-            borderTop: '1px solid var(--border-subtle)',
-            background: '#FFFFFF'
+            borderTop: '1px solid var(--color-border)',
+            background: 'var(--color-surface)'
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              background: 'var(--bg-canvas)',
-              border: '1px dashed var(--border-antique)',
+              background: 'var(--color-light)',
+              border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-xs)',
               padding: '0.5rem 0.75rem',
               marginBottom: '1rem',
-              fontSize: '0.85rem'
+              fontSize: '0.82rem'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--crimson-royal)' }}>
-                <Tag size={15} />
-                <span>Coupon Applied: <strong>{couponCode}</strong></span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-dark)' }}>
+                <Tag size={14} />
+                <span>Promotion: <strong>{couponCode}</strong></span>
               </div>
-              <span style={{ color: 'var(--forest-green)', fontWeight: 700 }}>-₹{discount}</span>
+              <span style={{ color: 'var(--color-dark)', fontWeight: 700 }}>-₹{discount}</span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginBottom: '1.25rem', fontSize: '0.9rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1.25rem', fontSize: '0.88rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-muted)' }}>
                 <span>Subtotal</span>
-                <span>₹{subtotal}</span>
+                <span style={{ color: 'var(--color-dark)' }}>₹{subtotal}</span>
               </div>
               {discount > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--forest-green)' }}>
-                  <span>Festive Coupon Savings</span>
-                  <span>-₹{discount}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-muted)' }}>
+                  <span>Discount</span>
+                  <span style={{ color: 'var(--color-dark)' }}>-₹{discount}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-                <span>Express Courier Shipping</span>
-                <span style={{ color: 'var(--forest-green)', fontWeight: 600 }}>FREE</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-muted)' }}>
+                <span>Shipping</span>
+                <span style={{ color: 'var(--color-dark)', fontWeight: 600 }}>Complimentary</span>
               </div>
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                color: 'var(--text-primary)',
-                fontSize: '1.15rem',
-                fontWeight: 700,
+                color: 'var(--color-dark)',
+                fontSize: '1.1rem',
+                fontWeight: 600,
                 marginTop: '0.5rem',
-                paddingTop: '0.5rem',
-                borderTop: '1px solid var(--border-subtle)'
+                paddingTop: '0.65rem',
+                borderTop: '1px solid var(--color-border)'
               }}>
-                <span>Total Amount</span>
-                <span style={{ color: 'var(--crimson-royal)' }}>₹{total}</span>
+                <span>Total</span>
+                <span>₹{total}</span>
               </div>
             </div>
 
@@ -278,10 +290,10 @@ export default function CartDrawer() {
               href="/checkout"
               onClick={() => setIsCartOpen(false)}
               className="btn-primary"
-              style={{ width: '100%', fontSize: '1rem', padding: '1rem', textAlign: 'center' }}
+              style={{ width: '100%', fontSize: '0.85rem', padding: '1rem', textAlign: 'center' }}
             >
-              <span>Proceed to Express Checkout</span>
-              <ArrowRight size={18} />
+              <span>Proceed to Checkout</span>
+              <ArrowRight size={16} />
             </Link>
           </div>
         )}

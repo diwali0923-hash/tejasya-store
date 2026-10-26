@@ -1,203 +1,105 @@
 import React from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Truck, RotateCcw, Heart } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer style={{
-      background: '#FFFFFF',
-      borderTop: '1px solid var(--border-subtle)',
+      background: 'var(--color-dark)',
+      color: 'var(--color-light)',
       marginTop: '5rem',
-      padding: '4rem 0 2rem 0'
+      padding: '4.5rem 0 2.5rem 0'
     }}>
       <div className="container">
-        {/* 4 Trust Props */}
+        {/* Editorial Brand & Columns */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.5rem',
+          gap: '3rem',
           paddingBottom: '3rem',
-          borderBottom: '1px solid var(--border-subtle)',
-          marginBottom: '3rem'
-        }}>
-          <div style={{ display: 'flex', gap: '0.85rem' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'var(--bg-canvas)',
-              border: '1px solid var(--border-antique)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <ShieldCheck size={20} color="var(--terracotta)" />
-            </div>
-            <div>
-              <h4 style={{ color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: '0.25rem' }}>Shatter-Proof Transit</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.4 }}>
-                Multi-layer bubble and shockproof cushioning. 100% free instant replacement if damaged.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.85rem' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'var(--bg-canvas)',
-              border: '1px solid var(--border-antique)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <Truck size={20} color="var(--terracotta)" />
-            </div>
-            <div>
-              <h4 style={{ color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: '0.25rem' }}>Express Free Shipping</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.4 }}>
-                Dispatches within 24 hours. Pre-Dhanteras guaranteed delivery across India.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.85rem' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'var(--bg-canvas)',
-              border: '1px solid var(--border-antique)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <RotateCcw size={20} color="var(--terracotta)" />
-            </div>
-            <div>
-              <h4 style={{ color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: '0.25rem' }}>Hassle-Free Support</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.4 }}>
-                Dedicated WhatsApp and email support for real-time tracking updates.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.85rem' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'var(--bg-canvas)',
-              border: '1px solid var(--border-antique)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <Heart size={20} color="var(--terracotta)" />
-            </div>
-            <div>
-              <h4 style={{ color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: '0.25rem' }}>Artisan Handcrafted</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.4 }}>
-                Directly uplifting traditional pottery clusters and skilled women artisans.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Brand Details & Footer Links */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '2.5rem',
-          paddingBottom: '3rem'
+          borderBottom: '1px solid rgba(247, 244, 238, 0.15)'
         }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
-              <span style={{ fontSize: '1.4rem' }}>🪔</span>
-              <span style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.4rem',
-                fontWeight: 700,
-                color: 'var(--text-primary)',
-                letterSpacing: '0.12em'
-              }}>
-                TEJASYA
-              </span>
-            </div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>
-              Celebrating the timeless light within every home. Curating authentic Indian craftsmanship, smokeless illumination, and auspicious festive elegance.
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.5rem',
+              fontWeight: 600,
+              letterSpacing: '0.15em',
+              display: 'block',
+              marginBottom: '1rem'
+            }}>
+              TEJASYA
+            </span>
+            <p style={{ fontSize: '0.85rem', color: 'rgba(247, 244, 238, 0.65)', lineHeight: 1.6, maxWidth: '280px' }}>
+              Handcrafted earthen lamps and smokeless jewel light for contemporary Indian spaces. Built with artisanal pottery clusters across Rajasthan and Uttar Pradesh.
             </p>
           </div>
 
           <div>
-            <h5 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '1rem', letterSpacing: '0.05em' }}>COLLECTIONS</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
+            <h5 style={{ fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem', color: 'rgba(247, 244, 238, 0.9)' }}>
+              Collections
+            </h5>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.85rem' }}>
               <li>
-                <Link href="/product/the-shubh-deepavali-celebration-collection" style={{ color: 'var(--text-secondary)' }}>
+                <Link href="/product/the-shubh-deepavali-celebration-collection" style={{ color: 'rgba(247, 244, 238, 0.65)' }}>
                   Shubh Deepavali 66-Piece Set
                 </Link>
               </li>
               <li>
-                <Link href="/product/grand-mandir-balcony-glow-kit" style={{ color: 'var(--text-secondary)' }}>
-                  Grand Mandir & Balcony Glow Kit
+                <Link href="/product/grand-mandir-balcony-glow-kit" style={{ color: 'rgba(247, 244, 238, 0.65)' }}>
+                  Grand Mandir 112-Piece Kit
                 </Link>
               </li>
               <li>
-                <Link href="/product/artisanal-jewel-glass-gel-candles" style={{ color: 'var(--text-secondary)' }}>
+                <Link href="/product/artisanal-jewel-glass-gel-candles" style={{ color: 'rgba(247, 244, 238, 0.65)' }}>
                   Jewel Glass Gel Candles (12 Pcs)
                 </Link>
               </li>
               <li>
-                <Link href="/product/heritage-handpainted-mitti-diyas" style={{ color: 'var(--text-secondary)' }}>
-                  Heritage Handpainted Diyas (24 Pcs)
+                <Link href="/product/heritage-handpainted-mitti-diyas" style={{ color: 'rgba(247, 244, 238, 0.65)' }}>
+                  Handpainted Mitti Diyas (24 Pcs)
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h5 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '1rem', letterSpacing: '0.05em' }}>ASSURANCE</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              <li>Safe Transit Guaranteed</li>
-              <li>Dispatches in 24 Hours</li>
-              <li>Zero-Plastic Protective Packaging</li>
-              <li>Pan-India Express Logistics</li>
+            <h5 style={{ fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem', color: 'rgba(247, 244, 238, 0.9)' }}>
+              Dispatch & Logistics
+            </h5>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.85rem', color: 'rgba(247, 244, 238, 0.65)' }}>
+              <li>Dispatches within 24 Hours</li>
+              <li>Guaranteed Pre-Dhanteras Delivery</li>
+              <li>Multi-layer Bubble Cushion Packaging</li>
+              <li>Transit Damage Replacement Policy</li>
             </ul>
           </div>
 
           <div>
-            <h5 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '1rem', letterSpacing: '0.05em' }}>SUPPORT</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              <li>Doorstep Delivery Help</li>
-              <li>Breakage Replacement Claim</li>
-              <li>WhatsApp Support</li>
-              <li>Track Festive Parcel</li>
-            </ul>
+            <h5 style={{ fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem', color: 'rgba(247, 244, 238, 0.9)' }}>
+              Client Care
+            </h5>
+            <p style={{ fontSize: '0.85rem', color: 'rgba(247, 244, 238, 0.65)', lineHeight: 1.6 }}>
+              For order modifications, tracking status, or courier assistance, please contact our dispatch team with your order reference.
+            </p>
           </div>
         </div>
 
         {/* Bottom */}
         <div style={{
-          borderTop: '1px solid var(--border-subtle)',
-          paddingTop: '1.5rem',
+          paddingTop: '2rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: '1rem',
-          fontSize: '0.8rem',
-          color: 'var(--text-muted)'
+          fontSize: '0.78rem',
+          color: 'rgba(247, 244, 238, 0.45)'
         }}>
           <div>
-            © {new Date().getFullYear()} Tejasya Living. All rights reserved. Shubh Deepavali 🪔
+            © {new Date().getFullYear()} Tejasya Living. All rights reserved.
           </div>
           <div>
-            <span>Crafted with devotion for Indian Festivals</span>
+            <span>Festive Edition • Pan-India Delivery</span>
           </div>
         </div>
       </div>

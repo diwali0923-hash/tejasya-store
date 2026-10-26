@@ -3,21 +3,22 @@
 import React from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { ShoppingBag, Sparkles, ShieldCheck, Truck } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 
 export default function Header() {
   const { totalItems, setIsCartOpen } = useCart();
 
   return (
     <>
-      {/* Festive Urgency Top Bar */}
+      {/* Top Banner (Strict Editorial) */}
       <div style={{
-        background: '#7A1E22',
-        color: '#FAF7F2',
-        padding: '0.5rem 1rem',
-        fontSize: '0.8rem',
+        background: 'var(--color-dark)',
+        color: 'var(--color-light)',
+        padding: '0.45rem 1rem',
+        fontSize: '0.75rem',
         textAlign: 'center',
-        letterSpacing: '0.03em',
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -25,31 +26,19 @@ export default function Header() {
         flexWrap: 'wrap',
         fontWeight: 500
       }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#F4D8A8', fontWeight: 600 }}>
-          <Sparkles size={14} /> DIWALI DISPATCH GUARANTEE:
-        </span>
-        <span>Guaranteed delivery before Dhanteras on all orders placed today.</span>
-        <span style={{
-          background: 'rgba(255, 255, 255, 0.15)',
-          border: '1px solid rgba(255, 255, 255, 0.25)',
-          borderRadius: '4px',
-          padding: '0.1rem 0.5rem',
-          fontSize: '0.75rem',
-          fontWeight: 700,
-          color: '#FFF'
-        }}>
-          CODE: SHUBH300 (₹300 OFF)
-        </span>
+        <span>Diwali Delivery Guarantee: Orders placed today arrive before Dhanteras</span>
+        <span style={{ opacity: 0.5 }}>|</span>
+        <span>Use Code <strong>SHUBH300</strong> for INR 300 Off</span>
       </div>
 
-      {/* Main Navigation Bar */}
+      {/* Main Header */}
       <header style={{
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'rgba(250, 247, 242, 0.94)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--border-subtle)'
+        background: 'rgba(247, 244, 238, 0.95)',
+        backdropFilter: 'blur(8px)',
+        borderBottom: '1px solid var(--color-border)'
       }}>
         <div className="container" style={{
           display: 'flex',
@@ -57,90 +46,62 @@ export default function Header() {
           justifyContent: 'space-between',
           height: '4.5rem'
         }}>
-          {/* Brand Logo */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: '#F4EFE7',
-              border: '1px solid var(--border-antique)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.25rem'
+          {/* Logo */}
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.18em',
+              color: 'var(--color-dark)',
+              display: 'block',
+              lineHeight: 1
             }}>
-              🪔
-            </div>
-            <div>
-              <span style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.75rem',
-                fontWeight: 700,
-                letterSpacing: '0.12em',
-                color: '#1C1614',
-                display: 'block',
-                lineHeight: 1
-              }}>
-                TEJASYA
-              </span>
-              <span style={{
-                fontSize: '0.65rem',
-                letterSpacing: '0.22em',
-                color: 'var(--brass-antique)',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginTop: '3px',
-                fontWeight: 600
-              }}>
-                SACRED LIVING • INDIA
-              </span>
-            </div>
+              TEJASYA
+            </span>
+            <span style={{
+              fontSize: '0.62rem',
+              letterSpacing: '0.25em',
+              color: 'var(--color-muted)',
+              textTransform: 'uppercase',
+              display: 'block',
+              marginTop: '4px',
+              fontWeight: 500
+            }}>
+              Light & Form • Edition 2026
+            </span>
           </Link>
 
-          {/* Core Trust Pillars (Desktop) */}
-          <div style={{ display: 'none', gap: '2rem', alignItems: 'center' }} className="desktop-perks">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              <Truck size={16} color="var(--terracotta)" />
-              <span>Free Express Delivery</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              <ShieldCheck size={16} color="var(--terracotta)" />
-              <span>Shatter-Proof Bubble Packaging</span>
-            </div>
-          </div>
-
-          {/* Admin link + Bag */}
-          {/* Bag */}
+          {/* Bag Trigger */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-
             <button
               onClick={() => setIsCartOpen(true)}
               style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-antique)',
-                color: 'var(--text-primary)',
-                padding: '0.55rem 1.15rem',
-                borderRadius: 'var(--radius-full)',
+                background: 'transparent',
+                border: '1px solid var(--color-dark)',
+                color: 'var(--color-dark)',
+                padding: '0.5rem 1.15rem',
+                borderRadius: 'var(--radius-xs)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.6rem',
                 cursor: 'pointer',
                 fontWeight: 600,
-                fontSize: '0.9rem',
-                boxShadow: 'var(--shadow-soft)'
+                fontSize: '0.8rem',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase'
               }}
             >
-              <ShoppingBag size={17} color="var(--crimson-royal)" />
+              <ShoppingBag size={15} />
               <span>Bag</span>
               {totalItems > 0 && (
                 <span style={{
-                  background: 'var(--crimson-royal)',
-                  color: '#fff',
-                  fontSize: '0.75rem',
+                  background: 'var(--color-dark)',
+                  color: 'var(--color-light)',
+                  fontSize: '0.72rem',
                   fontWeight: 700,
-                  width: '20px',
-                  height: '20px',
+                  width: '18px',
+                  height: '18px',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',

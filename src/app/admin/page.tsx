@@ -106,7 +106,7 @@ Pincode: ${addr.pincode}`;
     }
   };
 
-  // 🔒 Render Passcode Gate if not authenticated
+  // Render Passcode Gate if not authenticated
   if (isAuthenticated === false) {
     return (
       <div style={{
@@ -407,10 +407,10 @@ Pincode: ${addr.pincode}`;
                             fontSize: '0.85rem'
                           }}
                         >
-                          <option value="unfulfilled">🔴 Unfulfilled (Needs Meesho Order)</option>
-                          <option value="ordered_on_meesho">🟡 Ordered on Meesho</option>
-                          <option value="dispatched">🟢 Dispatched by Meesho</option>
-                          <option value="delivered">✅ Delivered to Customer</option>
+                          <option value="unfulfilled">Unfulfilled (Needs Meesho Placement)</option>
+                          <option value="ordered_on_meesho">Ordered on Meesho</option>
+                          <option value="dispatched">Dispatched by Meesho</option>
+                          <option value="delivered">Delivered to Customer</option>
                         </select>
                       </div>
                     </div>
@@ -430,8 +430,8 @@ Pincode: ${addr.pincode}`;
                         border: '1px solid var(--border-subtle)'
                       }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--terracotta)', fontWeight: 700 }}>
-                            📍 CUSTOMER DELIVERY ADDRESS
+                          <span style={{ fontSize: '0.75rem', color: 'var(--color-dark)', fontWeight: 700, letterSpacing: '0.04em' }}>
+                            CUSTOMER DELIVERY ADDRESS
                           </span>
                           <button
                             onClick={() => handleCopyAddress(order)}
@@ -449,14 +449,14 @@ Pincode: ${addr.pincode}`;
                             }}
                           >
                             {copiedId === order.id ? <Check size={13} /> : <Copy size={13} />}
-                            <span>{copiedId === order.id ? 'Copied!' : 'Copy Full Address'}</span>
+                            <span>{copiedId === order.id ? 'Copied' : 'Copy Full Address'}</span>
                           </button>
                         </div>
 
                         <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
                           <div><strong>{order.shippingAddress.fullName}</strong></div>
-                          <div>📞 <strong>{order.shippingAddress.phone}</strong> {order.shippingAddress.alternatePhone && `(Alt: ${order.shippingAddress.alternatePhone})`}</div>
-                          {order.customerEmail && <div>✉️ {order.customerEmail}</div>}
+                          <div>Phone: <strong>{order.shippingAddress.phone}</strong> {order.shippingAddress.alternatePhone && `(Alt: ${order.shippingAddress.alternatePhone})`}</div>
+                          {order.customerEmail && <div>Email: {order.customerEmail}</div>}
                           <div style={{ marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
                             {order.shippingAddress.houseFlatBuilding}, {order.shippingAddress.roadAreaColony}
                             {order.shippingAddress.landmark && <><br />Landmark: {order.shippingAddress.landmark}</>}
@@ -473,8 +473,8 @@ Pincode: ${addr.pincode}`;
                         borderRadius: 'var(--radius-sm)',
                         border: '1px solid var(--border-subtle)'
                       }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--terracotta)', fontWeight: 700, display: 'block', marginBottom: '0.75rem' }}>
-                          🛍️ ORDERED ITEMS & MEESHO FORWARD-LINKS
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-dark)', fontWeight: 700, display: 'block', marginBottom: '0.75rem', letterSpacing: '0.04em' }}>
+                          ORDERED ITEMS & MEESHO FORWARD-LINKS
                         </span>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>

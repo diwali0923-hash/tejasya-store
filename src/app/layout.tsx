@@ -21,7 +21,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'TEJASYA 🪔 | Luxury Handcrafted Diwali Diyas, Candle Hampers & Festive Decor',
+  title: 'TEJASYA | Luxury Handcrafted Diwali Diyas, Candle Hampers & Festive Decor',
   description: 'Bring the divine glow to your home with Tejasya. Handcrafted mitti diyas, smokeless jewel gel candles, and grand mandir illumination kits with guaranteed pre-Dhanteras delivery.',
   keywords: [
     'Diwali diyas',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     'Tejasya'
   ],
   openGraph: {
-    title: 'TEJASYA 🪔 | Luxury Handcrafted Diwali Diyas & Candle Sets',
+    title: 'TEJASYA | Luxury Handcrafted Diwali Diyas & Candle Sets',
     description: 'Transform your home with authentic earthen craftsmanship and smokeless jewel light. Dispatches in 24 hours with free express delivery.',
     images: ['/images/shubh_box.jpg']
   }

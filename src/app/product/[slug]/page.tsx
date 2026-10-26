@@ -7,9 +7,7 @@ import Link from 'next/link';
 import { getProductBySlug } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import {
-  Star,
   ShieldCheck,
-  Truck,
   CheckCircle2,
   Package,
   Clock,
@@ -38,15 +36,15 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div style={{ padding: '2rem 0 5rem 0' }}>
+    <div style={{ padding: '2.5rem 0 6rem 0' }}>
       <div className="container">
-        {/* Breadcrumb */}
-        <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-          <Link href="/" style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-            <ArrowLeft size={14} /> Back to Collections
+        {/* Navigation Breadcrumb */}
+        <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', letterSpacing: '0.04em' }}>
+          <Link href="/" style={{ color: 'var(--color-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none' }}>
+            <ArrowLeft size={13} /> Catalog
           </Link>
-          <span style={{ color: 'var(--text-muted)' }}>/</span>
-          <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{product.name}</span>
+          <span style={{ color: 'var(--color-muted)' }}>/</span>
+          <span style={{ color: 'var(--color-dark)', fontWeight: 500 }}>{product.name}</span>
         </div>
 
         {/* Product Grid */}
@@ -59,13 +57,14 @@ export default function ProductDetailPage() {
           {/* Left Gallery */}
           <div>
             <div
-              className="artisan-card"
+              className="editorial-card"
               style={{
                 position: 'relative',
                 width: '100%',
                 aspectRatio: '1/1',
                 overflow: 'hidden',
-                marginBottom: '1rem'
+                marginBottom: '1rem',
+                background: 'var(--color-surface)'
               }}
             >
               <Image
@@ -81,14 +80,16 @@ export default function ProductDetailPage() {
                 position: 'absolute',
                 top: '1rem',
                 left: '1rem',
-                background: 'var(--crimson-royal)',
-                color: '#fff',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                padding: '0.35rem 0.85rem',
-                borderRadius: 'var(--radius-full)'
+                background: 'var(--color-dark)',
+                color: 'var(--color-light)',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                padding: '0.35rem 0.75rem',
+                borderRadius: 'var(--radius-xs)',
+                textTransform: 'uppercase'
               }}>
-                SAVE {product.discountPercentage}%
+                Save {product.discountPercentage}%
               </span>
             </div>
 
@@ -101,39 +102,37 @@ export default function ProductDetailPage() {
                     onClick={() => setSelectedImageIndex(idx)}
                     style={{
                       position: 'relative',
-                      width: '70px',
-                      height: '70px',
+                      width: '72px',
+                      height: '72px',
                       borderRadius: 'var(--radius-xs)',
                       overflow: 'hidden',
-                      border: selectedImageIndex === idx ? '2px solid var(--crimson-royal)' : '1px solid var(--border-antique)',
+                      border: selectedImageIndex === idx ? '2px solid var(--color-dark)' : '1px solid var(--color-border)',
                       background: 'transparent',
                       cursor: 'pointer',
                       flexShrink: 0,
-                      opacity: selectedImageIndex === idx ? 1 : 0.7
+                      opacity: selectedImageIndex === idx ? 1 : 0.65,
+                      transition: 'opacity 0.2s'
                     }}
                   >
-                    <Image src={img} alt="" fill sizes="70px" style={{ objectFit: 'cover' }} />
+                    <Image src={img} alt="" fill sizes="72px" style={{ objectFit: 'cover' }} />
                   </button>
                 ))}
               </div>
             )}
 
-            {/* Transit Protection Notice */}
-            <div style={{
-              background: '#FFFFFF',
-              border: '1px solid var(--border-antique)',
-              borderRadius: 'var(--radius-sm)',
+            {/* Dispatch & Packaging Notice */}
+            <div className="editorial-card" style={{
               padding: '1.25rem',
               marginTop: '1.5rem',
               display: 'flex',
               gap: '1rem'
             }}>
-              <ShieldCheck size={26} color="var(--terracotta)" style={{ flexShrink: 0 }} />
+              <ShieldCheck size={22} color="var(--color-dark)" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
-                <h4 style={{ color: 'var(--text-primary)', fontSize: '0.95rem', marginBottom: '0.25rem' }}>
-                  🛡️ {product.packageDetails.transitAssurance}
+                <h4 style={{ color: 'var(--color-dark)', fontSize: '0.88rem', fontWeight: 600, marginBottom: '0.25rem', letterSpacing: '0.02em' }}>
+                  Transit Protection & Packaging
                 </h4>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: 1.5 }}>
+                <p style={{ color: 'var(--color-muted)', fontSize: '0.8rem', lineHeight: 1.5 }}>
                   {product.packageDetails.packagingNotice}
                 </p>
               </div>
@@ -143,28 +142,27 @@ export default function ProductDetailPage() {
           {/* Right Product Details */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-              <span className="artisan-pill">
-                ✨ {product.category === 'bundle' ? 'Curated Festive Hamper' : product.category}
+              <span className="editorial-pill">
+                {product.category === 'bundle' ? 'Curated Collection' : product.category.toUpperCase()}
               </span>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--haldi-amber)', fontSize: '0.85rem' }}>
-                <Star size={15} fill="var(--haldi-amber)" />
-                <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{product.rating}</span>
-                <span style={{ color: 'var(--text-muted)' }}>({product.reviewCount} Reviews)</span>
-              </div>
+              <span style={{ fontSize: '0.8rem', color: 'var(--color-muted)' }}>
+                {product.reviewCount} Verified Orders
+              </span>
             </div>
 
             <h1 style={{
-              fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
-              color: 'var(--text-primary)',
+              fontSize: 'clamp(1.75rem, 3.2vw, 2.35rem)',
+              color: 'var(--color-dark)',
               lineHeight: 1.25,
               marginBottom: '0.75rem',
-              fontWeight: 700
+              fontWeight: 500,
+              letterSpacing: '0.03em'
             }}>
               {product.name}
             </h1>
 
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+            <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
               {product.tagline}
             </p>
 
@@ -172,27 +170,28 @@ export default function ProductDetailPage() {
             <div style={{
               display: 'flex',
               alignItems: 'baseline',
-              gap: '0.85rem',
-              padding: '1rem 0',
-              borderTop: '1px solid var(--border-subtle)',
-              borderBottom: '1px solid var(--border-subtle)',
-              marginBottom: '1.5rem'
+              gap: '1rem',
+              padding: '1.1rem 0',
+              borderTop: '1px solid var(--color-border)',
+              borderBottom: '1px solid var(--color-border)',
+              marginBottom: '1.75rem'
             }}>
-              <span style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--crimson-royal)' }}>
+              <span style={{ fontSize: '2rem', fontWeight: 600, color: 'var(--color-dark)' }}>
                 ₹{product.price}
               </span>
-              <span style={{ fontSize: '1.1rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
+              <span style={{ fontSize: '1.05rem', color: 'var(--color-muted)', textDecoration: 'line-through' }}>
                 ₹{product.originalPrice}
               </span>
               <span style={{
-                background: 'rgba(36, 88, 57, 0.1)',
-                color: 'var(--forest-green)',
+                background: 'var(--color-dark)',
+                color: 'var(--color-light)',
                 borderRadius: 'var(--radius-xs)',
                 padding: '0.2rem 0.55rem',
-                fontSize: '0.8rem',
-                fontWeight: 700
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                letterSpacing: '0.04em'
               }}>
-                SAVE ₹{product.originalPrice - product.price} (55% OFF)
+                {product.discountPercentage}% OFF
               </span>
             </div>
 
@@ -201,53 +200,53 @@ export default function ProductDetailPage() {
               display: 'flex',
               alignItems: 'center',
               gap: '0.65rem',
-              background: '#FFFFFF',
-              border: '1px solid var(--border-antique)',
-              borderRadius: 'var(--radius-sm)',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-xs)',
               padding: '0.75rem 1rem',
-              marginBottom: '1.5rem',
-              fontSize: '0.85rem',
-              color: 'var(--terracotta)'
+              marginBottom: '1.75rem',
+              fontSize: '0.82rem',
+              color: 'var(--color-dark)'
             }}>
-              <Clock size={17} style={{ flexShrink: 0 }} />
+              <Clock size={16} style={{ flexShrink: 0 }} />
               <div>
-                <strong>Diwali Rush Guarantee:</strong> {product.packageDetails.dispatchTime}
+                <strong>Immediate Dispatch:</strong> {product.packageDetails.dispatchTime}
               </div>
             </div>
 
-            {/* Highlights */}
-            <div style={{ marginBottom: '1.75rem' }}>
-              <h4 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.75rem', letterSpacing: '0.04em' }}>
-                COLLECTION HIGHLIGHTS
+            {/* Specifications / Highlights */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h4 style={{ color: 'var(--color-dark)', fontSize: '0.82rem', marginBottom: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Specifications & Inclusions
               </h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 {product.features.map((feat, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                    <CheckCircle2 size={16} color="var(--terracotta)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <span>{feat}</span>
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', fontSize: '0.85rem', color: 'var(--color-dark)' }}>
+                    <CheckCircle2 size={15} color="var(--color-dark)" style={{ flexShrink: 0, marginTop: '3px' }} />
+                    <span style={{ lineHeight: 1.45 }}>{feat}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Quantity & Buy */}
+            {/* Quantity & CTA */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Quantity:</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--color-muted)', letterSpacing: '0.04em' }}>QUANTITY:</span>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  background: '#FFFFFF',
-                  border: '1px solid var(--border-antique)',
-                  borderRadius: 'var(--radius-full)',
-                  padding: '4px'
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-xs)',
+                  padding: '2px'
                 }}>
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     style={{
                       background: 'transparent',
                       border: 'none',
-                      color: 'var(--text-primary)',
+                      color: 'var(--color-dark)',
                       width: '32px',
                       height: '32px',
                       cursor: 'pointer',
@@ -256,7 +255,7 @@ export default function ProductDetailPage() {
                   >
                     -
                   </button>
-                  <span style={{ padding: '0 0.85rem', fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                  <span style={{ padding: '0 0.85rem', fontWeight: 600, color: 'var(--color-dark)', fontSize: '0.9rem' }}>
                     {quantity}
                   </span>
                   <button
@@ -264,7 +263,7 @@ export default function ProductDetailPage() {
                     style={{
                       background: 'transparent',
                       border: 'none',
-                      color: 'var(--text-primary)',
+                      color: 'var(--color-dark)',
                       width: '32px',
                       height: '32px',
                       cursor: 'pointer',
@@ -280,23 +279,23 @@ export default function ProductDetailPage() {
                 <button
                   onClick={() => addToCart(product, quantity)}
                   className="btn-secondary"
-                  style={{ padding: '1rem', fontSize: '0.95rem' }}
+                  style={{ padding: '0.95rem', fontSize: '0.82rem' }}
                 >
-                  Add to Bag
+                  Add to Cart
                 </button>
                 <button
                   onClick={handleBuyNow}
                   className="btn-primary"
-                  style={{ padding: '1rem', fontSize: '0.95rem' }}
+                  style={{ padding: '0.95rem', fontSize: '0.82rem' }}
                 >
-                  <span>Buy Now — Instant Checkout</span>
+                  Buy Now
                 </button>
               </div>
             </div>
 
             {/* Accordions */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div className="artisan-card" style={{ overflow: 'hidden' }}>
+              <div className="editorial-card" style={{ overflow: 'hidden' }}>
                 <button
                   onClick={() => setOpenAccordion(openAccordion === 'contents' ? null : 'contents')}
                   style={{
@@ -307,17 +306,18 @@ export default function ProductDetailPage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    color: 'var(--text-primary)',
-                    fontSize: '0.9rem',
+                    color: 'var(--color-dark)',
+                    fontSize: '0.85rem',
                     fontWeight: 600,
+                    letterSpacing: '0.04em',
                     cursor: 'pointer'
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Package size={17} color="var(--terracotta)" /> What’s Inside The Set ({product.piecesCount} Pieces)
+                    <Package size={16} color="var(--color-dark)" /> Included Pieces ({product.piecesCount} Total)
                   </span>
                   <ChevronDown
-                    size={18}
+                    size={16}
                     style={{
                       transform: openAccordion === 'contents' ? 'rotate(180deg)' : 'none',
                       transition: 'transform 0.2s'
@@ -325,8 +325,8 @@ export default function ProductDetailPage() {
                   />
                 </button>
                 {openAccordion === 'contents' && (
-                  <div style={{ padding: '0 1.25rem 1.25rem 1.25rem', borderTop: '1px solid var(--border-subtle)' }}>
-                    <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem', marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <div style={{ padding: '0 1.25rem 1.25rem 1.25rem', borderTop: '1px solid var(--color-border)' }}>
+                    <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem', marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.82rem', color: 'var(--color-muted)' }}>
                       {product.packageDetails.contents.map((item, idx) => (
                         <li key={idx}>{item}</li>
                       ))}
@@ -335,7 +335,7 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              <div className="artisan-card" style={{ overflow: 'hidden' }}>
+              <div className="editorial-card" style={{ overflow: 'hidden' }}>
                 <button
                   onClick={() => setOpenAccordion(openAccordion === 'transit' ? null : 'transit')}
                   style={{
@@ -346,17 +346,18 @@ export default function ProductDetailPage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    color: 'var(--text-primary)',
-                    fontSize: '0.9rem',
+                    color: 'var(--color-dark)',
+                    fontSize: '0.85rem',
                     fontWeight: 600,
+                    letterSpacing: '0.04em',
                     cursor: 'pointer'
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <ShieldCheck size={17} color="var(--terracotta)" /> Packaging & Breakage Replacement Policy
+                    <ShieldCheck size={16} color="var(--color-dark)" /> Break-Safe Transit Packaging
                   </span>
                   <ChevronDown
-                    size={18}
+                    size={16}
                     style={{
                       transform: openAccordion === 'transit' ? 'rotate(180deg)' : 'none',
                       transition: 'transform 0.2s'
@@ -364,9 +365,9 @@ export default function ProductDetailPage() {
                   />
                 </button>
                 {openAccordion === 'transit' && (
-                  <div style={{ padding: '0 1.25rem 1.25rem 1.25rem', borderTop: '1px solid var(--border-subtle)' }}>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginTop: '0.75rem' }}>
-                      We know earthen clay and glass are delicate. To ensure zero heartbreak on Diwali, every item is wrapped in shockproof bubble air cushions. In the rare event that any piece arrives damaged, simply message us on WhatsApp with a photo and we will immediately dispatch a free replacement parcel!
+                  <div style={{ padding: '0 1.25rem 1.25rem 1.25rem', borderTop: '1px solid var(--color-border)' }}>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--color-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
+                      Earthen clay and molded glass require specialized handling. All items are individually wrapped in cellular air cushioning. In the unexpected event of transit damage, our support team immediately dispatches a replacement parcel upon receiving parcel delivery confirmation.
                     </p>
                   </div>
                 )}
@@ -379,17 +380,17 @@ export default function ProductDetailPage() {
       {/* Sticky Mobile Buy Bar */}
       <div className="sticky-mobile-cta">
         <div>
-          <span style={{ fontSize: '0.7rem', color: 'var(--crimson-royal)', display: 'block', fontWeight: 700 }}>
-            SAVE {product.discountPercentage}% TODAY
+          <span style={{ fontSize: '0.72rem', color: 'var(--color-muted)', display: 'block', letterSpacing: '0.04em' }}>
+            {product.discountPercentage}% SAVINGS
           </span>
-          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-dark)' }}>
             ₹{product.price}
           </span>
         </div>
         <button
           onClick={handleBuyNow}
           className="btn-primary"
-          style={{ padding: '0.65rem 1.35rem', fontSize: '0.85rem' }}
+          style={{ padding: '0.75rem 1.5rem', fontSize: '0.8rem' }}
         >
           <span>Buy Now</span>
         </button>
