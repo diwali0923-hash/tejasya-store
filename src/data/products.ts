@@ -14,10 +14,10 @@ export const PRODUCTS: Product[] = [
     rating: 4.9,
     reviewCount: 384,
     images: [
-      '/images/shubh_box.jpg',
-      '/images/gel_candles.jpg',
-      '/images/painted_diyas.webp',
-      '/images/mandir_kit.jpg'
+      '/images/shubh_box.png',
+      '/images/gel_candles.png',
+      '/images/painted_diyas.png',
+      '/images/mandir_kit.png'
     ],
     features: [
       '24 Handpainted Mitti Diyas with shimmering gold filigree borders',
@@ -68,10 +68,10 @@ export const PRODUCTS: Product[] = [
     rating: 4.8,
     reviewCount: 290,
     images: [
-      '/images/mandir_kit.jpg',
-      '/images/mud_diyas.webp',
-      '/images/tealights.webp',
-      '/images/acrylic_led.webp'
+      '/images/mandir_kit.png',
+      '/images/shubh_box.png',
+      '/images/painted_diyas.png',
+      '/images/gel_candles.png'
     ],
     features: [
       '60 Traditional Terracotta Clay Diyas with handmade cotton wicks',
@@ -122,8 +122,8 @@ export const PRODUCTS: Product[] = [
     rating: 4.9,
     reviewCount: 462,
     images: [
-      '/images/gel_candles.jpg',
-      '/images/gel_candles_2.webp'
+      '/images/gel_candles.png',
+      '/images/shubh_box.png'
     ],
     features: [
       '12 Heavy glass votives with high-clarity vibrantly tinted jelly gel wax',
@@ -162,8 +162,8 @@ export const PRODUCTS: Product[] = [
     rating: 4.8,
     reviewCount: 198,
     images: [
-      '/images/painted_diyas.webp',
-      '/images/shubh_box.jpg'
+      '/images/painted_diyas.png',
+      '/images/shubh_box.png'
     ],
     features: [
       '24 Hand-moulded natural terracotta diyas (6 each of 4 traditional colors)',

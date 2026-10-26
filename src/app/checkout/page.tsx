@@ -255,7 +255,7 @@ export default function CheckoutPage() {
         currency: orderData.currency,
         name: 'Tejasya Living',
         description: `Shubh Deepavali Order #${orderId}`,
-        image: '/images/shubh_box.jpg',
+        image: '/images/shubh_box.png',
         order_id: orderData.id,
         handler: async function (response: any) {
           try {

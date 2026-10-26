@@ -32,10 +32,15 @@ export const metadata: Metadata = {
     'festive home decor India',
     'Tejasya'
   ],
+  icons: {
+    icon: '/favicon.jpg',
+    shortcut: '/favicon.jpg',
+    apple: '/favicon.jpg'
+  },
   openGraph: {
     title: 'TEJASYA | Luxury Handcrafted Diwali Diyas & Candle Sets',
     description: 'Transform your home with authentic earthen craftsmanship and smokeless jewel light. Dispatches in 24 hours with free express delivery.',
-    images: ['/images/shubh_box.jpg']
+    images: ['/images/shubh_box.png']
   }
 };
 

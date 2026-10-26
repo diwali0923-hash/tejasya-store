@@ -95,7 +95,7 @@ export default function HomePage() {
                   overflow: 'hidden'
                 }}>
                   <Image
-                    src="/images/shubh_box.jpg"
+                    src="/images/shubh_box.png"
                     alt="The Shubh Deepavali 66-Piece Artisanal Lighting Collection"
                     fill
                     priority
