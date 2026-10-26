@@ -12,8 +12,8 @@ export default function HomePage() {
   const featuredProduct = PRODUCTS[0]; // 66-piece hamper
 
   return (
-    <div>
-      {/* 1. FULL-BLEED MOBILE HERO SECTION */}
+    <div style={{ background: 'var(--bg-festive)' }}>
+      {/* 1. FULL-BLEED MOBILE & DESKTOP HERO SECTION */}
       <section className="mobile-hero-wrapper">
         {/* Full-Bleed Background Image */}
         <Image
@@ -28,8 +28,11 @@ export default function HomePage() {
         {/* Ambient Warm Gradient Overlay */}
         <div className="hero-overlay" />
 
+        {/* Seamless Bottom Gradient Blend (Eliminates the sharp cutoff) */}
+        <div className="hero-blend-bottom" />
+
         {/* Hero Content Overlay */}
-        <div className="container" style={{ position: 'relative', zIndex: 2, maxWidth: '820px', margin: '0 auto 0 0' }}>
+        <div className="container" style={{ position: 'relative', zIndex: 3, maxWidth: '820px', margin: '0 auto 0 0' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
             <span className="festive-pill-gold">
               <Sparkles size={13} color="var(--crimson-royal)" />
@@ -38,12 +41,12 @@ export default function HomePage() {
           </div>
 
           <h1 style={{
-            fontSize: 'clamp(2.5rem, 6.5vw, 4.25rem)',
+            fontSize: 'clamp(2.4rem, 6vw, 4.25rem)',
             lineHeight: 1.08,
             color: '#FFFFFF',
             marginBottom: '1.25rem',
             fontWeight: 800,
-            textShadow: '0 4px 20px rgba(0, 0, 0, 0.6)'
+            textShadow: '0 4px 24px rgba(0, 0, 0, 0.7)'
           }}>
             Sacred Light, Hand-Sculpted for Your Home
           </h1>
@@ -54,14 +57,14 @@ export default function HomePage() {
             lineHeight: 1.55,
             marginBottom: '2rem',
             maxWidth: '620px',
-            textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
+            textShadow: '0 2px 12px rgba(0, 0, 0, 0.6)'
           }}>
             Handcrafted mitti diyas, smokeless jewel gel candles, and grand mandir illumination sets. Bring authentic festive radiance to your home without cheap plastic or toxic soot.
           </p>
 
           {/* Factual Dispatch Urgency Badge */}
           <div style={{
-            background: 'rgba(31, 10, 10, 0.85)',
+            background: 'rgba(31, 10, 10, 0.88)',
             border: '1.5px solid var(--gold-radiant)',
             borderRadius: 'var(--radius-xs)',
             padding: '0.85rem 1.25rem',
@@ -70,8 +73,8 @@ export default function HomePage() {
             alignItems: 'center',
             gap: '0.85rem',
             maxWidth: '600px',
-            backdropFilter: 'blur(8px)',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)'
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.45)'
           }}>
             <Truck size={22} color="var(--gold-bright)" style={{ flexShrink: 0 }} />
             <div style={{ color: '#FFFFFF', fontSize: '0.88rem', lineHeight: 1.45 }}>
@@ -80,7 +83,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Dual Vibrant CTA Buttons */}
+          {/* Dual Action Buttons */}
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <Link
               href={`/product/${featuredProduct.slug}`}
@@ -96,9 +99,9 @@ export default function HomePage() {
               className="btn-secondary"
               style={{
                 color: '#FFFFFF',
-                borderColor: 'rgba(255, 255, 255, 0.6)',
-                background: 'rgba(0, 0, 0, 0.35)',
-                backdropFilter: 'blur(4px)',
+                borderColor: 'rgba(255, 255, 255, 0.65)',
+                background: 'rgba(0, 0, 0, 0.4)',
+                backdropFilter: 'blur(6px)',
                 padding: '1.05rem 1.85rem'
               }}
             >
@@ -132,7 +135,7 @@ export default function HomePage() {
       </section>
 
       {/* 2. FEATURED BESTSELLER SHOWCASE */}
-      <section style={{ padding: '5rem 0', background: 'var(--bg-festive)' }}>
+      <section style={{ padding: '4.5rem 0 5rem 0', position: 'relative' }}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 3.5rem auto' }}>
             <span className="festive-pill-crimson" style={{ marginBottom: '0.75rem' }}>
@@ -267,7 +270,7 @@ export default function HomePage() {
       </section>
 
       {/* 3. ALL 4 CURATED OFFERINGS GRID */}
-      <section id="collections" style={{ padding: '5rem 0', background: 'var(--bg-surface)' }}>
+      <section id="collections" style={{ padding: '5rem 0', position: 'relative' }}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 3.5rem auto' }}>
             <span className="festive-pill-gold" style={{ marginBottom: '0.75rem' }}>
@@ -405,7 +408,7 @@ export default function HomePage() {
       {/* 4. ARTISAN CRAFT & MATERIAL SANCTITY */}
       <section style={{
         padding: '5rem 0',
-        background: 'var(--bg-surface-warm)',
+        background: 'linear-gradient(180deg, var(--bg-festive) 0%, rgba(246, 239, 227, 0.7) 50%, var(--bg-festive) 100%)',
         borderTop: '1px solid var(--border-subtle)',
         borderBottom: '1px solid var(--border-subtle)'
       }}>
@@ -449,7 +452,7 @@ export default function HomePage() {
       </section>
 
       {/* 5. VERIFIED CLIENT REVIEWS */}
-      <section style={{ padding: '5rem 0', background: 'var(--bg-surface)' }}>
+      <section style={{ padding: '5rem 0', position: 'relative' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <span className="festive-pill-gold" style={{ marginBottom: '0.75rem' }}>
