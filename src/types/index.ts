@@ -3,7 +3,7 @@ export interface Product {
   slug: string;
   name: string;
   tagline: string;
-  category: 'bundle' | 'candles' | 'diyas';
+  category: 'bundle' | 'candles' | 'diyas' | 'combo';
   price: number;
   originalPrice: number;
   discountPercentage: number;

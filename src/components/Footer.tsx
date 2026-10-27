@@ -42,23 +42,28 @@ export default function Footer() {
             </h5>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
               <li>
-                <Link href="/product/the-shubh-deepavali-celebration-collection" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Shubh Deepavali 66-Piece Set
+                <Link href="/product/the-royal-deepotsav-52-piece-artisanal-illumination-collection" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
+                  Royal Deepotsav 52-Piece Box
                 </Link>
               </li>
               <li>
-                <Link href="/product/grand-mandir-balcony-glow-kit" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Grand Mandir 112-Piece Kit
+                <Link href="/product/handcrafted-jaipur-blue-pottery-ceramic-oil-diyas-set-of-6" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
+                  Jaipur Blue Pottery Diyas (6 Pcs)
                 </Link>
               </li>
               <li>
-                <Link href="/product/artisanal-jewel-glass-gel-candles" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
+                <Link href="/product/handpainted-terracotta-clay-diyas-gold-border-24-pack" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
+                  Handpainted Mitti Diyas (24 Pcs)
+                </Link>
+              </li>
+              <li>
+                <Link href="/product/jewel-toned-glass-jelly-gel-tealight-candles-pack-of-12" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
                   Jewel Glass Gel Candles (12 Pcs)
                 </Link>
               </li>
               <li>
-                <Link href="/product/heritage-handpainted-mitti-diyas" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Handpainted Mitti Diyas (24 Pcs)
+                <Link href="/product/magic-light-festive-duo-water-sensor-led-diyas-3d-reflection-shadow-cups-24-pack" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
+                  Magic Light Festive Duo (24 Pcs)
                 </Link>
               </li>
             </ul>

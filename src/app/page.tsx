@@ -5,11 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
+import CollectionComparison from '@/components/CollectionComparison';
 import { ArrowRight, Star, Clock, ShieldCheck, CheckCircle2, Sparkles, Truck } from 'lucide-react';
 
 export default function HomePage() {
   const { addToCart } = useCart();
-  const featuredProduct = PRODUCTS[0]; // 66-piece hamper
+  const featuredProduct = PRODUCTS[0]; // 52-piece collection
 
   return (
     <div style={{ background: 'var(--bg-festive)' }}>
@@ -59,7 +60,7 @@ export default function HomePage() {
             maxWidth: '620px',
             textShadow: '0 2px 12px rgba(0, 0, 0, 0.6)'
           }}>
-            Handcrafted mitti diyas, smokeless jewel gel candles, and grand mandir illumination sets. Bring authentic festive radiance to your home without cheap plastic or toxic soot.
+            Handcrafted mitti diyas, Jaipur blue pottery ceramics, smokeless jewel gel candles, and magical water sensor lights. Bring authentic festive radiance to your home without cheap plastic or toxic soot.
           </p>
 
           {/* Factual Dispatch Urgency Badge */}
@@ -90,7 +91,7 @@ export default function HomePage() {
               className="btn-gold"
               style={{ fontSize: '0.95rem', padding: '1.1rem 2.25rem' }}
             >
-              <span>Get 66-Piece Hamper — ₹1,499</span>
+              <span>Get 52-Piece Hamper — ₹1,699</span>
               <ArrowRight size={18} />
             </Link>
 
@@ -105,7 +106,7 @@ export default function HomePage() {
                 padding: '1.05rem 1.85rem'
               }}
             >
-              <span>Explore All 4 Sets</span>
+              <span>Explore All 5 Listings</span>
             </a>
           </div>
 
@@ -139,13 +140,13 @@ export default function HomePage() {
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 3.5rem auto' }}>
             <span className="festive-pill-crimson" style={{ marginBottom: '0.75rem' }}>
-              TOP SELLER FOR DIWALI 2026
+              SIGNATURE MASTERPIECE FOR DIWALI 2026
             </span>
             <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 2.85rem)', color: 'var(--crimson-royal)', marginBottom: '0.75rem', fontWeight: 800 }}>
-              The Shubh Deepavali 66-Piece Hamper
+              The Royal Deepotsav 52-Piece Hamper
             </h2>
             <p style={{ color: 'var(--text-body)', fontSize: '1rem', lineHeight: 1.6 }}>
-              A complete ceremonial lighting suite. Combines heritage handpainted earthen diyas with jewel-toned crystal gel candles and safe balcony LED tealights.
+              A grand ceremonial suite uniting generational Indian artisan crafts: glazed Jaipur blue pottery ceramics, handpainted mitti diyas, smokeless jewel gel candles, and floral lotus wax deepaks.
             </p>
           </div>
 
@@ -166,8 +167,8 @@ export default function HomePage() {
               boxShadow: 'var(--shadow-card)'
             }}>
               <Image
-                src="/images/shubh_box.png"
-                alt="The Shubh Deepavali 66-Piece Artisanal Lighting Collection"
+                src={featuredProduct.images[0] || '/images/shubh_box.png'}
+                alt="The Royal Deepotsav 52-Piece Luxury Artisanal Lighting Collection"
                 fill
                 sizes="(max-width: 768px) 100vw, 550px"
                 style={{ objectFit: 'cover' }}
@@ -184,7 +185,7 @@ export default function HomePage() {
                 borderRadius: 'var(--radius-xs)',
                 letterSpacing: '0.06em'
               }}>
-                SAVE 55% TODAY
+                SAVE 51% TODAY
               </span>
             </div>
 
@@ -195,11 +196,11 @@ export default function HomePage() {
                   <Star key={i} size={16} fill="currentColor" />
                 ))}
                 <span style={{ fontWeight: 800, color: 'var(--text-dark)', marginLeft: '0.25rem' }}>4.9</span>
-                <span style={{ color: 'var(--text-muted)' }}>(384 Verified Reviews)</span>
+                <span style={{ color: 'var(--text-muted)' }}>(428 Verified Reviews)</span>
               </div>
 
               <h3 style={{ fontSize: '1.85rem', color: 'var(--text-dark)', marginBottom: '0.75rem', fontWeight: 800 }}>
-                Everything You Need for Diwali Night
+                Everything You Need for Sacred Diwali Illumination
               </h3>
 
               <div style={{
@@ -212,10 +213,10 @@ export default function HomePage() {
                 marginBottom: '1.75rem'
               }}>
                 <span style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--crimson-royal)' }}>
-                  ₹1,499
+                  ₹1,699
                 </span>
                 <span style={{ fontSize: '1.25rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
-                  ₹3,299
+                  ₹3,499
                 </span>
                 <span style={{
                   background: 'rgba(139, 24, 24, 0.1)',
@@ -232,7 +233,11 @@ export default function HomePage() {
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
                   <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
-                  <span><strong>24 Handpainted Mitti Diyas</strong> with raised gold filigree borders</span>
+                  <span><strong>6 Glazed Jaipur Blue Pottery Ceramic Diyas</strong> (Reusable Heirloom Stoneware)</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
+                  <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
+                  <span><strong>24 Handpainted Mitti Diyas</strong> with raised gold beaded borders</span>
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
                   <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
@@ -240,11 +245,11 @@ export default function HomePage() {
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
                   <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
-                  <span><strong>30 Warm-Glow LED Tealights</strong> for wind-prone balconies & flower rangolis</span>
+                  <span><strong>10 Handcrafted Floral Lotus Wax Diya Candles</strong> (Box Exclusive)</span>
                 </li>
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.95rem', color: 'var(--text-body)' }}>
                   <CheckCircle2 size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
-                  <span><strong>Complimentary Cotton Wicks</strong> included in the box</span>
+                  <span><strong>Complimentary Long-Staple Cotton Wicks</strong> included</span>
                 </li>
               </ul>
 
@@ -261,7 +266,7 @@ export default function HomePage() {
                   className="btn-primary"
                   style={{ width: '100%', padding: '1rem', fontSize: '0.9rem', textAlign: 'center' }}
                 >
-                  <span>Buy Now — ₹1,499</span>
+                  <span>Buy Now — ₹1,699</span>
                 </Link>
               </div>
             </div>
@@ -269,18 +274,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. ALL 4 CURATED OFFERINGS GRID */}
+      {/* 2.5 INTERACTIVE COLLECTION VALUE COMPARISON & PSYCHOLOGICAL ANCHOR */}
+      <CollectionComparison />
+
+      {/* 3. ALL 5 CURATED OFFERINGS GRID */}
       <section id="collections" style={{ padding: '5rem 0', position: 'relative' }}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 3.5rem auto' }}>
             <span className="festive-pill-gold" style={{ marginBottom: '0.75rem' }}>
-              OUR 4 CURATED COLLECTIONS
+              OUR 5 CURATED FESTIVE OFFERINGS
             </span>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: 'var(--text-dark)', marginBottom: '0.75rem', fontWeight: 800 }}>
               Handcrafted for Dhanteras & Deepavali
             </h2>
             <p style={{ color: 'var(--text-body)', fontSize: '1rem', lineHeight: 1.6 }}>
-              Directly sourced from generational pottery clusters. Every parcel is dispatched in shock-resistant bubble air cushions for guaranteed safe arrival.
+              Directly sourced from generational pottery and handicraft clusters across India. Every parcel is dispatched in shock-resistant bubble air cushions for guaranteed safe arrival.
             </p>
           </div>
 
