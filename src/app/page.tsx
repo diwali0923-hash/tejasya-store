@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import CollectionComparison from '@/components/CollectionComparison';
+import InteractiveCollectionHotspots from '@/components/InteractiveCollectionHotspots';
 import { ArrowRight, Star, Clock, ShieldCheck, CheckCircle2, Sparkles, Truck } from 'lucide-react';
 
 export default function HomePage() {
@@ -157,36 +158,12 @@ export default function HomePage() {
             gap: '3rem',
             alignItems: 'center'
           }}>
-            {/* Left: Packshot Image */}
-            <div style={{
-              position: 'relative',
-              width: '100%',
-              aspectRatio: '1/1',
-              borderRadius: 'var(--radius-xs)',
-              overflow: 'hidden',
-              boxShadow: 'var(--shadow-card)'
-            }}>
-              <Image
-                src={featuredProduct.images[0] || '/images/shubh_box.png'}
-                alt="The Royal Deepotsav 52-Piece Luxury Artisanal Lighting Collection"
-                fill
-                sizes="(max-width: 768px) 100vw, 550px"
-                style={{ objectFit: 'cover' }}
+            {/* Left: Interactive Packshot with Floating Product Hotspots */}
+            <div>
+              <InteractiveCollectionHotspots
+                mainImage={featuredProduct.images[0] || '/images/collection_hero.png'}
+                alt={featuredProduct.name}
               />
-              <span style={{
-                position: 'absolute',
-                top: '1rem',
-                left: '1rem',
-                background: 'var(--crimson-royal)',
-                color: '#FFFFFF',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                padding: '0.4rem 0.9rem',
-                borderRadius: 'var(--radius-xs)',
-                letterSpacing: '0.06em'
-              }}>
-                SAVE 51% TODAY
-              </span>
             </div>
 
             {/* Right: Breakdown & Value */}

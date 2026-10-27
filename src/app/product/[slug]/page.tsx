@@ -19,6 +19,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import CollectionComparison from '@/components/CollectionComparison';
+import InteractiveCollectionHotspots from '@/components/InteractiveCollectionHotspots';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -61,41 +62,48 @@ export default function ProductDetailPage() {
         }}>
           {/* Left Gallery */}
           <div>
-            <div
-              className="festive-card"
-              style={{
-                position: 'relative',
-                width: '100%',
-                aspectRatio: '1/1',
-                overflow: 'hidden',
-                marginBottom: '1rem',
-                borderRadius: 'var(--radius-xs)'
-              }}
-            >
-              <Image
-                src={product.images[selectedImageIndex] || product.images[0]}
+            {product.category === 'bundle' ? (
+              <InteractiveCollectionHotspots
+                mainImage={product.images[selectedImageIndex] || product.images[0]}
                 alt={product.name}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 550px"
-                style={{ objectFit: 'cover' }}
               />
+            ) : (
+              <div
+                className="festive-card"
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  aspectRatio: '1/1',
+                  overflow: 'hidden',
+                  marginBottom: '1rem',
+                  borderRadius: 'var(--radius-xs)'
+                }}
+              >
+                <Image
+                  src={product.images[selectedImageIndex] || product.images[0]}
+                  alt={product.name}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 550px"
+                  style={{ objectFit: 'cover' }}
+                />
 
-              <span style={{
-                position: 'absolute',
-                top: '1rem',
-                left: '1rem',
-                background: 'var(--crimson-royal)',
-                color: '#FFFFFF',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                letterSpacing: '0.04em',
-                padding: '0.4rem 0.9rem',
-                borderRadius: 'var(--radius-xs)'
-              }}>
-                SAVE {product.discountPercentage}%
-              </span>
-            </div>
+                <span style={{
+                  position: 'absolute',
+                  top: '1rem',
+                  left: '1rem',
+                  background: 'var(--crimson-royal)',
+                  color: '#FFFFFF',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                  padding: '0.4rem 0.9rem',
+                  borderRadius: 'var(--radius-xs)'
+                }}>
+                  SAVE {product.discountPercentage}%
+                </span>
+              </div>
+            )}
 
             {/* Thumbnail Strip */}
             {product.images.length > 1 && (
