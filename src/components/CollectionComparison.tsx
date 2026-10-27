@@ -79,10 +79,12 @@ export default function CollectionComparison() {
   };
 
   return (
-    <section style={{
-      padding: '5rem 0',
-      background: 'linear-gradient(180deg, #180808 0%, #2A0E0E 50%, #150505 100%)',
-      position: 'relative',
+    <section
+      id="collection-comparison"
+      style={{
+        padding: '5rem 0',
+        background: 'linear-gradient(180deg, #180808 0%, #2A0E0E 50%, #150505 100%)',
+        position: 'relative',
       overflow: 'hidden'
     }}>
       {/* Decorative Golden Ambient Glows */}

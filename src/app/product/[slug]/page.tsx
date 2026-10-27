@@ -14,8 +14,11 @@ import {
   ArrowLeft,
   ChevronDown,
   Star,
-  Truck
+  Truck,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
+import CollectionComparison from '@/components/CollectionComparison';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -196,6 +199,88 @@ export default function ProductDetailPage() {
                 SAVE ₹{product.originalPrice - product.price} ({product.discountPercentage}% OFF)
               </span>
             </div>
+
+            {/* Price Anchor Callout for Collection Box */}
+            {product.category === 'bundle' && (
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(82, 12, 12, 0.08) 0%, rgba(212, 175, 55, 0.15) 100%)',
+                border: '1.5px solid var(--gold-radiant)',
+                borderRadius: 'var(--radius-xs)',
+                padding: '1.1rem 1.25rem',
+                marginBottom: '1.75rem',
+                boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--crimson-royal)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Sparkles size={14} /> BUNDLE SAVINGS & PRICE ANCHOR
+                  </span>
+                  <span style={{
+                    background: '#047857',
+                    color: '#FFFFFF',
+                    fontWeight: 900,
+                    fontSize: '0.74rem',
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '3px'
+                  }}>
+                    SAVE ₹747 EXTRA
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.88rem', color: 'var(--text-dark)', lineHeight: 1.5 }}>
+                  <div>Purchased separately: <strong style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>₹2,446</strong> (4 Individual Listings)</div>
+                  <div style={{ marginTop: '0.25rem' }}>
+                    Master Box Offer: <strong style={{ color: 'var(--crimson-royal)', fontSize: '1.15rem' }}>₹1,699</strong>
+                    <span style={{ color: '#047857', fontWeight: 700, marginLeft: '0.5rem' }}>• 31% Cheaper than buying separately!</span>
+                  </div>
+                </div>
+                <a
+                  href="#collection-comparison"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    marginTop: '0.75rem',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    color: 'var(--crimson-royal)',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  <span>See full product comparison & savings breakdown ↓</span>
+                </a>
+              </div>
+            )}
+
+            {/* Upsell for Individual Products */}
+            {product.category !== 'bundle' && (
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(82, 12, 12, 0.08) 0%, rgba(212, 175, 55, 0.12) 100%)',
+                border: '1.5px solid var(--gold-radiant)',
+                borderRadius: 'var(--radius-xs)',
+                padding: '0.9rem 1.15rem',
+                marginBottom: '1.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.75rem'
+              }}>
+                <div>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--crimson-royal)', textTransform: 'uppercase' }}>
+                    PART OF THE ROYAL DEEPOTSAV COLLECTION
+                  </span>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-dark)', margin: '0.2rem 0 0 0' }}>
+                    Get this plus 3 more curated lighting suites (52 Pcs total) for just <strong>₹1,699</strong>.
+                  </p>
+                </div>
+                <Link
+                  href="/product/the-royal-deepotsav-52-piece-artisanal-illumination-collection"
+                  className="btn-gold"
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+                >
+                  <span>Upgrade to Box (Save ₹747)</span>
+                </Link>
+              </div>
+            )}
 
             {/* Dispatch Banner */}
             <div style={{
@@ -379,6 +464,13 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Interactive Value Comparison Section for Collection Box */}
+      {product.category === 'bundle' && (
+        <div style={{ marginTop: '4rem' }}>
+          <CollectionComparison />
+        </div>
+      )}
 
       {/* Sticky Mobile Buy Bar */}
       <div className="sticky-mobile-cta">
