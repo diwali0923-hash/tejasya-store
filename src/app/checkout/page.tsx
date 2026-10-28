@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { Order, CustomerAddress } from '@/types';
 import { saveOrder } from '@/lib/orderService';
+import { trackInitiateCheckout, trackPurchase } from '@/lib/metaPixel';
 import {
   ShieldCheck,
   ArrowLeft,
@@ -47,6 +48,17 @@ export default function CheckoutPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Meta Pixel: InitiateCheckout
+  useEffect(() => {
+    if (items.length > 0) {
+      trackInitiateCheckout({
+        contentIds: items.map((i) => i.product.id),
+        numItems: items.reduce((sum, i) => sum + i.quantity, 0),
+        value: total
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCheckout = async () => {
     setErrorMsg('');
@@ -130,6 +142,11 @@ export default function CheckoutPage() {
           createdAt: new Date().toISOString()
         };
         await saveOrder(mockOrder);
+        trackPurchase({
+          contentIds: items.map((i) => i.product.id),
+          numItems: items.reduce((sum, i) => sum + i.quantity, 0),
+          value: total
+        });
         clearCart();
         router.push(`/order-success?orderId=${orderId}`);
         return;
@@ -249,6 +266,11 @@ export default function CheckoutPage() {
             };
 
             await saveOrder(newOrder);
+            trackPurchase({
+              contentIds: items.map((i) => i.product.id),
+              numItems: items.reduce((sum, i) => sum + i.quantity, 0),
+              value: total
+            });
             clearCart();
             router.push(`/order-success?orderId=${orderId}`);
           } catch (err: any) {

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { Check, Sparkles, ArrowRight, ShieldCheck, Zap, ShoppingBag } from 'lucide-react';
+import { trackAddToCart } from '@/lib/metaPixel';
 
 interface ComponentItem {
   id: string;
@@ -76,6 +77,7 @@ export default function CollectionComparison() {
 
   const handleAddBox = () => {
     addToCart(collectionProduct, 1);
+    trackAddToCart({ contentName: collectionProduct.name, contentId: collectionProduct.id, contentType: 'product', value: collectionProduct.price });
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2200);
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { notFound, useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import CollectionComparison from '@/components/CollectionComparison';
 import InteractiveCollectionHotspots from '@/components/InteractiveCollectionHotspots';
+import { trackViewContent, trackAddToCart } from '@/lib/metaPixel';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -36,8 +37,34 @@ export default function ProductDetailPage() {
     notFound();
   }
 
+  // Meta Pixel: ViewContent
+  useEffect(() => {
+    trackViewContent({
+      contentName: product.name,
+      contentId: product.id,
+      contentType: 'product',
+      value: product.price
+    });
+  }, [product.id, product.name, product.price]);
+
+  const handleAddToCart = (qty: number = quantity) => {
+    addToCart(product, qty);
+    trackAddToCart({
+      contentName: product.name,
+      contentId: product.id,
+      contentType: 'product',
+      value: product.price * qty
+    });
+  };
+
   const handleBuyNow = () => {
     buyNow(product, quantity);
+    trackAddToCart({
+      contentName: product.name,
+      contentId: product.id,
+      contentType: 'product',
+      value: product.price * quantity
+    });
     router.push('/checkout');
   };
 
@@ -375,7 +402,7 @@ export default function ProductDetailPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <button
-                  onClick={() => addToCart(product, quantity)}
+                  onClick={() => handleAddToCart(quantity)}
                   className="btn-secondary"
                   style={{ padding: '1rem', fontSize: '0.9rem' }}
                 >
@@ -492,7 +519,7 @@ export default function ProductDetailPage() {
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flex: 1, justifyContent: 'flex-end' }}>
           <button
-            onClick={() => addToCart(product, quantity)}
+            onClick={() => handleAddToCart(quantity)}
             className="btn-secondary"
             style={{ padding: '0.7rem 0.85rem', fontSize: '0.8rem', minHeight: '44px', whiteSpace: 'nowrap' }}
           >

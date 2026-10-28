@@ -9,6 +9,7 @@ import { useCart } from '@/context/CartContext';
 import CollectionComparison from '@/components/CollectionComparison';
 import InteractiveCollectionHotspots from '@/components/InteractiveCollectionHotspots';
 import { ArrowRight, Star, Clock, ShieldCheck, CheckCircle2, Sparkles, Truck } from 'lucide-react';
+import { trackAddToCart } from '@/lib/metaPixel';
 
 export default function HomePage() {
   const router = useRouter();
@@ -234,7 +235,7 @@ export default function HomePage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <button
-                  onClick={() => addToCart(featuredProduct)}
+                  onClick={() => { addToCart(featuredProduct); trackAddToCart({ contentName: featuredProduct.name, contentId: featuredProduct.id, contentType: 'product', value: featuredProduct.price }); }}
                   className="btn-secondary"
                   style={{ width: '100%', padding: '1rem', fontSize: '0.9rem' }}
                 >
@@ -373,7 +374,7 @@ export default function HomePage() {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                       <button
-                        onClick={() => addToCart(product)}
+                        onClick={() => { addToCart(product); trackAddToCart({ contentName: product.name, contentId: product.id, contentType: 'product', value: product.price }); }}
                         className="btn-secondary"
                         style={{ padding: '0.75rem', fontSize: '0.82rem' }}
                       >
