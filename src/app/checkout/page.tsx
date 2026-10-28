@@ -42,7 +42,7 @@ const loadRazorpayScript = (): Promise<boolean> => {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.src = 'https://checkout.razorpay.com/v1/magic-checkout.js';
     script.async = true;
     script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
@@ -330,6 +330,18 @@ export default function CheckoutPage() {
       }
 
       // Create Razorpay Order on server
+      // Build Magic Checkout line_items from cart
+      const lineItems = items.map(({ product, quantity }) => ({
+        sku: product.id,
+        variant_id: product.id,
+        price: Math.round(product.originalPrice * 100),
+        offer_price: Math.round(product.price * 100),
+        quantity,
+        name: product.name,
+        description: product.tagline || product.name,
+        image_url: product.images[0] ? `${typeof window !== 'undefined' ? window.location.origin : ''}${product.images[0]}` : undefined
+      }));
+
       const res = await fetch('/api/razorpay/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -341,7 +353,8 @@ export default function CheckoutPage() {
             phone: cleanPhone,
             pincode: formData.pincode,
             city: formData.city
-          }
+          },
+          line_items: lineItems
         })
       });
 
