@@ -6,6 +6,7 @@ import { Product, CartItem } from '@/types';
 interface CartContextType {
   items: CartItem[];
   addToCart: (product: Product, quantity?: number) => void;
+  buyNow: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -65,6 +66,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsCartOpen(true);
   };
 
+  const buyNow = (product: Product, quantity = 1) => {
+    setItems((prev) => {
+      const existing = prev.find((i) => i.product.id === product.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.product.id === product.id ? { ...i, quantity: Math.max(i.quantity, quantity) } : i
+        );
+      }
+      return [...prev, { product, quantity }];
+    });
+    setIsCartOpen(false);
+  };
+
   const removeFromCart = (productId: string) => {
     setItems((prev) => prev.filter((i) => i.product.id !== productId));
   };
@@ -115,6 +129,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         items,
         addToCart,
+        buyNow,
         removeFromCart,
         updateQuantity,
         clearCart,

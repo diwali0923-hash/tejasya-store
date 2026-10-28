@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { Check, Sparkles, ArrowRight, ShieldCheck, Zap, ShoppingBag } from 'lucide-react';
@@ -62,7 +63,8 @@ const COLLECTION_ITEMS: ComponentItem[] = [
 ];
 
 export default function CollectionComparison() {
-  const { addToCart } = useCart();
+  const router = useRouter();
+  const { addToCart, buyNow } = useCart();
   const collectionProduct = PRODUCTS[0]; // The 52-Piece Box
   const [activeItem, setActiveItem] = useState<ComponentItem>(COLLECTION_ITEMS[0]);
   const [isAdded, setIsAdded] = useState(false);
@@ -76,6 +78,11 @@ export default function CollectionComparison() {
     addToCart(collectionProduct, 1);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2200);
+  };
+
+  const handleBuyNowBox = () => {
+    buyNow(collectionProduct, 1);
+    router.push('/checkout');
   };
 
   return (
@@ -145,8 +152,8 @@ export default function CollectionComparison() {
         {/* Dual Column Layout: Interactive Explorer & Grand Savings Anchor */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '2.5rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '2rem',
           alignItems: 'stretch'
         }}>
           {/* Column 1: The 4 Component Breakdown (Interactive) */}
@@ -154,7 +161,7 @@ export default function CollectionComparison() {
             background: 'rgba(255, 255, 255, 0.04)',
             border: '1.5px solid rgba(212, 175, 55, 0.25)',
             borderRadius: 'var(--radius-xs)',
-            padding: '2rem',
+            padding: 'clamp(1.2rem, 3vw, 2rem)',
             display: 'flex',
             flexDirection: 'column',
             backdropFilter: 'blur(12px)',
@@ -272,7 +279,7 @@ export default function CollectionComparison() {
             background: 'linear-gradient(145deg, rgba(82, 12, 12, 0.85) 0%, rgba(35, 8, 8, 0.95) 100%)',
             border: '2px solid var(--gold-bright)',
             borderRadius: 'var(--radius-xs)',
-            padding: '2.25rem',
+            padding: 'clamp(1.25rem, 3vw, 2.25rem)',
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
@@ -375,35 +382,58 @@ export default function CollectionComparison() {
             </ul>
 
             {/* CTAs */}
-            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <button
-                onClick={handleAddBox}
+                onClick={handleBuyNowBox}
                 className="btn-gold"
                 style={{
                   width: '100%',
-                  padding: '1.15rem',
+                  padding: '1.1rem',
                   fontSize: '1rem',
                   justifyContent: 'center',
                   fontWeight: 800,
                   boxShadow: '0 6px 25px rgba(212, 175, 55, 0.45)'
                 }}
               >
-                <ShoppingBag size={18} />
-                <span>{isAdded ? '✓ Added to Your Bag!' : `Claim Collection Box — ₹${boxPrice.toLocaleString()}`}</span>
+                <span>⚡ Buy Now — ₹{boxPrice.toLocaleString()} (Instant Checkout)</span>
+              </button>
+
+              <button
+                onClick={handleAddBox}
+                style={{
+                  width: '100%',
+                  padding: '0.85rem',
+                  fontSize: '0.88rem',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(212, 175, 55, 0.4)',
+                  color: '#FFE082',
+                  borderRadius: 'var(--radius-xs)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <ShoppingBag size={16} />
+                <span>{isAdded ? '✓ Added to Your Bag!' : 'Add Box to Bag'}</span>
               </button>
 
               <Link
                 href={`/product/${collectionProduct.slug}`}
                 style={{
                   color: '#FFE082',
-                  fontSize: '0.85rem',
+                  fontSize: '0.82rem',
                   textAlign: 'center',
                   textDecoration: 'underline',
                   fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.35rem'
+                  gap: '0.35rem',
+                  marginTop: '0.25rem'
                 }}
               >
                 <span>View Full Specifications & Gallery</span>

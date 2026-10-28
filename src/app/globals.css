@@ -288,3 +288,50 @@ p, span, div, input, button, select {
   margin: 0 auto;
   padding: 0 1.25rem;
 }
+
+/* Responsive Navigation Visibility */
+.mobile-burger-btn {
+  display: flex !important;
+}
+
+.desktop-nav {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .mobile-burger-btn {
+    display: none !important;
+  }
+  .desktop-nav {
+    display: flex !important;
+  }
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile Visibility & Compact Enhancements */
+@media (max-width: 480px) {
+  .bag-text {
+    display: none;
+  }
+  .container {
+    padding: 0 1rem;
+  }
+}

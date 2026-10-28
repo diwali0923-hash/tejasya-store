@@ -27,7 +27,7 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const product = getProductBySlug(slug);
 
-  const { addToCart } = useCart();
+  const { addToCart, buyNow } = useCart();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [openAccordion, setOpenAccordion] = useState<'contents' | 'transit' | null>('contents');
@@ -37,7 +37,7 @@ export default function ProductDetailPage() {
   }
 
   const handleBuyNow = () => {
-    addToCart(product, quantity);
+    buyNow(product, quantity);
     router.push('/checkout');
   };
 
@@ -482,21 +482,30 @@ export default function ProductDetailPage() {
 
       {/* Sticky Mobile Buy Bar */}
       <div className="sticky-mobile-cta">
-        <div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--crimson-royal)', display: 'block', fontWeight: 800 }}>
+        <div style={{ flexShrink: 0 }}>
+          <span style={{ fontSize: '0.72rem', color: 'var(--crimson-royal)', display: 'block', fontWeight: 800 }}>
             SAVE {product.discountPercentage}% TODAY
           </span>
-          <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-dark)' }}>
-            ₹{product.price}
+          <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>
+            ₹{product.price * quantity}
           </span>
         </div>
-        <button
-          onClick={handleBuyNow}
-          className="btn-primary"
-          style={{ padding: '0.75rem 1.5rem', fontSize: '0.88rem' }}
-        >
-          <span>Buy Now</span>
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem', flex: 1, justifyContent: 'flex-end' }}>
+          <button
+            onClick={() => addToCart(product, quantity)}
+            className="btn-secondary"
+            style={{ padding: '0.7rem 0.85rem', fontSize: '0.8rem', minHeight: '44px', whiteSpace: 'nowrap' }}
+          >
+            + Bag
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="btn-primary"
+            style={{ padding: '0.7rem 1.15rem', fontSize: '0.84rem', minHeight: '44px', whiteSpace: 'nowrap' }}
+          >
+            <span>⚡ Buy Now</span>
+          </button>
+        </div>
       </div>
     </div>
   );

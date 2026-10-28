@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import CollectionComparison from '@/components/CollectionComparison';
@@ -10,7 +11,8 @@ import InteractiveCollectionHotspots from '@/components/InteractiveCollectionHot
 import { ArrowRight, Star, Clock, ShieldCheck, CheckCircle2, Sparkles, Truck } from 'lucide-react';
 
 export default function HomePage() {
-  const { addToCart } = useCart();
+  const router = useRouter();
+  const { addToCart, buyNow } = useCart();
   const featuredProduct = PRODUCTS[0]; // 52-piece collection
 
   return (
@@ -238,13 +240,16 @@ export default function HomePage() {
                 >
                   Add to Bag
                 </button>
-                <Link
-                  href={`/product/${featuredProduct.slug}`}
+                <button
+                  onClick={() => {
+                    buyNow(featuredProduct, 1);
+                    router.push('/checkout');
+                  }}
                   className="btn-primary"
                   style={{ width: '100%', padding: '1rem', fontSize: '0.9rem', textAlign: 'center' }}
                 >
-                  <span>Buy Now — ₹1,699</span>
-                </Link>
+                  <span>⚡ Buy Now — ₹1,699</span>
+                </button>
               </div>
             </div>
           </div>
@@ -374,13 +379,16 @@ export default function HomePage() {
                       >
                         Add to Bag
                       </button>
-                      <Link
-                        href={`/product/${product.slug}`}
+                      <button
+                        onClick={() => {
+                          buyNow(product, 1);
+                          router.push('/checkout');
+                        }}
                         className="btn-primary"
                         style={{ padding: '0.75rem', fontSize: '0.82rem', textAlign: 'center' }}
                       >
-                        <span>Buy Now</span>
-                      </Link>
+                        <span>⚡ Buy Now</span>
+                      </button>
                     </div>
                   </div>
                 </div>
