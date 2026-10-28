@@ -31,6 +31,12 @@ export async function saveOrder(order: Order): Promise<{ success: boolean; error
   // If Supabase is configured, also persist to Supabase
   if (isSupabaseConfigured && supabase) {
     try {
+      const formattedNotes = [
+        order.notes,
+        order.razorpayPaymentId ? `Razorpay Pay ID: ${order.razorpayPaymentId}` : null,
+        order.razorpayOrderId ? `Razorpay Order: ${order.razorpayOrderId}` : null
+      ].filter(Boolean).join(' • ') || null;
+
       const { error: orderError } = await supabase.from('orders').insert({
         id: order.id,
         customer_name: order.customerName,
@@ -43,10 +49,8 @@ export async function saveOrder(order: Order): Promise<{ success: boolean; error
         payment_method: order.paymentMethod,
         payment_status: order.paymentStatus,
         fulfillment_status: order.fulfillmentStatus,
-        razorpay_payment_id: order.razorpayPaymentId || null,
-        razorpay_order_id: order.razorpayOrderId || null,
         meesho_order_ids: order.meeshoOrderIds || null,
-        notes: order.notes || null,
+        notes: formattedNotes,
         created_at: order.createdAt
       });
 
