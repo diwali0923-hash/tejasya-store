@@ -160,7 +160,7 @@ export const PRODUCTS: Product[] = [
     images: [
       '/images/gel_candles_hero.png',
       '/images/gel_candles_lifestyle.png',
-      '/images/gel_candles_detail.png',
+      '/images/gel_candles_detail.jpg',
       '/images/gel_candles.png'
     ],
     features: [
