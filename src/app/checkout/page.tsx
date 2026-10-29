@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -49,17 +49,6 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Meta Pixel: InitiateCheckout
-  useEffect(() => {
-    if (items.length > 0) {
-      trackInitiateCheckout({
-        contentIds: items.map((i) => i.product.id),
-        numItems: items.reduce((sum, i) => sum + i.quantity, 0),
-        value: total
-      });
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const handleCheckout = async () => {
     setErrorMsg('');
 
@@ -67,6 +56,13 @@ export default function CheckoutPage() {
       setErrorMsg('Your festive bag is empty. Please return to catalog.');
       return;
     }
+
+    // Meta Pixel: InitiateCheckout -- fires on button click, not page load
+    trackInitiateCheckout({
+      contentIds: items.map((i) => i.product.id),
+      numItems: items.reduce((sum, i) => sum + i.quantity, 0),
+      value: total
+    });
 
     setIsSubmitting(true);
     const orderId = `TEJ-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
