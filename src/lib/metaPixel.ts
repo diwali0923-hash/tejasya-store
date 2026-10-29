@@ -8,7 +8,8 @@
  * - InitiateCheckout (checkout page load)
  * - Purchase (after successful payment)
  *
- * Set NEXT_PUBLIC_META_PIXEL_ID in .env.local to enable.
+ * Pixel ID is hardcoded in layout.tsx base script.
+ * These helpers fire standard events after the base script has loaded.
  */
 
 declare global {
@@ -16,8 +17,6 @@ declare global {
     fbq: (...args: any[]) => void;
   }
 }
-
-const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '';
 
 function fbq(...args: any[]) {
   if (typeof window !== 'undefined' && window.fbq) {
@@ -85,4 +84,4 @@ export function trackPurchase(params: {
   });
 }
 
-export { PIXEL_ID };
+
