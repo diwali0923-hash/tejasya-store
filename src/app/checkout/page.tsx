@@ -49,6 +49,29 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Fire-and-forget sale notification to owner
+  const notifySale = (order: Order) => {
+    fetch('/api/notify/sale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderId: order.id,
+        customerName: order.customerName,
+        customerPhone: order.customerPhone,
+        items: order.items.map((i) => ({
+          productName: i.productName,
+          quantity: i.quantity,
+          price: i.price
+        })),
+        totalAmount: order.totalAmount,
+        paymentMethod: order.paymentMethod,
+        shippingAddress: order.shippingAddress
+          ? { city: order.shippingAddress.city, state: order.shippingAddress.state, pincode: order.shippingAddress.pincode }
+          : undefined
+      })
+    }).catch(() => {}); // silent -- don't block checkout
+  };
+
   const handleCheckout = async () => {
     setErrorMsg('');
 
@@ -138,6 +161,7 @@ export default function CheckoutPage() {
           createdAt: new Date().toISOString()
         };
         await saveOrder(mockOrder);
+        notifySale(mockOrder);
         trackPurchase({
           contentIds: items.map((i) => i.product.id),
           numItems: items.reduce((sum, i) => sum + i.quantity, 0),
@@ -262,6 +286,7 @@ export default function CheckoutPage() {
             };
 
             await saveOrder(newOrder);
+            notifySale(newOrder);
             trackPurchase({
               contentIds: items.map((i) => i.product.id),
               numItems: items.reduce((sum, i) => sum + i.quantity, 0),
