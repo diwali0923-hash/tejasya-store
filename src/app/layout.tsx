@@ -23,7 +23,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://tejasya-store.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://www.tejasya.store'),
   title: 'TEJASYA | Luxury Handcrafted Diwali Diyas, Candle Hampers & Festive Decor',
   description: 'Bring the divine glow to your home with Tejasya. Handcrafted mitti diyas, smokeless jewel gel candles, and grand mandir illumination kits with guaranteed pre-Dhanteras delivery.',
   keywords: [
@@ -58,6 +58,20 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${plusJakarta.variable}`}>
       <head>
+        {/* Google Tag Manager */}
+        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-TCG8CM9N" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+`
+          }}
+        />
+        {/* End Google Tag Manager */}
+
+        {/* Meta Pixel */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -83,6 +97,7 @@ fbq('track', 'PageView');
             alt=""
           />
         </noscript>
+        {/* End Meta Pixel */}
       </head>
       <body>
         <CartProvider>
