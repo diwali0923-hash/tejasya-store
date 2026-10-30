@@ -28,11 +28,12 @@ export async function POST(req: Request) {
 
     const amountInPaise = Math.round(amount * 100);
 
-    const baseOptions = {
+    const baseOptions: any = {
       amount: amountInPaise,
       currency: 'INR',
       receipt: receipt || `rcpt_${Date.now()}`,
-      notes: notes || {}
+      notes: notes || {},
+      rto_review: true
     };
 
     // Magic Checkout requires line_items and line_items_total
