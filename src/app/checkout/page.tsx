@@ -18,7 +18,9 @@ import {
   Sparkles,
   Lock,
   Truck,
-  Package
+  Package,
+  Banknote,
+  CreditCard
 } from 'lucide-react';
 
 declare global {
@@ -26,6 +28,16 @@ declare global {
     Razorpay: any;
   }
 }
+
+const INDIAN_STATES = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+  'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+  'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+  'Delhi', 'Chandigarh', 'Jammu and Kashmir', 'Ladakh', 'Puducherry',
+  'Andaman and Nicobar Islands', 'Dadra and Nagar Haveli and Daman and Diu', 'Lakshadweep'
+];
 
 const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -42,12 +54,51 @@ const loadRazorpayScript = (): Promise<boolean> => {
   });
 };
 
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '0.75rem 0.85rem',
+  border: '1.5px solid var(--border-subtle)',
+  borderRadius: 'var(--radius-xs)',
+  fontSize: '0.92rem',
+  fontFamily: 'var(--font-body)',
+  background: 'var(--bg-card)',
+  color: 'var(--text-dark)',
+  outline: 'none',
+  transition: 'border-color 0.2s'
+};
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: '0.8rem',
+  fontWeight: 700,
+  color: 'var(--text-dark)',
+  marginBottom: '0.3rem'
+};
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, discount, total, couponCode, clearCart } = useCart();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [checkoutMode, setCheckoutMode] = useState<'select' | 'cod'>('select');
+
+  // COD address form
+  const [codForm, setCodForm] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    pincode: '',
+    houseFlatBuilding: '',
+    roadAreaColony: '',
+    landmark: '',
+    city: '',
+    state: ''
+  });
+
+  const updateCodForm = (field: string, value: string) => {
+    setCodForm(prev => ({ ...prev, [field]: value }));
+  };
 
   // Fire-and-forget sale notification to owner
   const notifySale = (order: Order) => {
@@ -72,7 +123,90 @@ export default function CheckoutPage() {
     }).catch(() => {}); // silent -- don't block checkout
   };
 
-  const handleCheckout = async () => {
+  const validateCodForm = (): string | null => {
+    if (!codForm.fullName.trim()) return 'Please enter your full name.';
+    if (!codForm.phone.trim() || codForm.phone.replace(/\D/g, '').length !== 10)
+      return 'Please enter a valid 10-digit phone number.';
+    if (!codForm.pincode.trim() || codForm.pincode.replace(/\D/g, '').length !== 6)
+      return 'Please enter a valid 6-digit pincode.';
+    if (!codForm.houseFlatBuilding.trim()) return 'Please enter your house/flat/building details.';
+    if (!codForm.roadAreaColony.trim()) return 'Please enter your road/area/colony.';
+    if (!codForm.city.trim()) return 'Please enter your city.';
+    if (!codForm.state.trim()) return 'Please select your state.';
+    return null;
+  };
+
+  const handleCodOrder = async () => {
+    setErrorMsg('');
+    const validationError = validateCodForm();
+    if (validationError) {
+      setErrorMsg(validationError);
+      return;
+    }
+
+    // Meta Pixel: InitiateCheckout
+    trackInitiateCheckout({
+      contentIds: items.map((i) => i.product.id),
+      numItems: items.reduce((sum, i) => sum + i.quantity, 0),
+      value: total
+    });
+
+    setIsSubmitting(true);
+    const orderId = `TEJ-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+
+    try {
+      const shippingAddress: CustomerAddress = {
+        fullName: codForm.fullName.trim(),
+        phone: codForm.phone.replace(/\D/g, ''),
+        email: codForm.email.trim() || undefined,
+        pincode: codForm.pincode.replace(/\D/g, ''),
+        houseFlatBuilding: codForm.houseFlatBuilding.trim(),
+        roadAreaColony: codForm.roadAreaColony.trim(),
+        landmark: codForm.landmark.trim() || undefined,
+        city: codForm.city.trim(),
+        state: codForm.state
+      };
+
+      const newOrder: Order = {
+        id: orderId,
+        customerName: shippingAddress.fullName,
+        customerPhone: shippingAddress.phone,
+        customerEmail: codForm.email.trim() || undefined,
+        shippingAddress,
+        items: items.map((i) => ({
+          productId: i.product.id,
+          productName: i.product.name,
+          quantity: i.quantity,
+          price: i.product.price,
+          meeshoSkus: i.product.meeshoMapping.map((m) => m.sku)
+        })),
+        subtotal,
+        discount,
+        shippingFee: 0,
+        totalAmount: total,
+        paymentMethod: 'COD',
+        paymentStatus: 'pending',
+        fulfillmentStatus: 'unfulfilled',
+        createdAt: new Date().toISOString()
+      };
+
+      await saveOrder(newOrder);
+      notifySale(newOrder);
+      trackPurchase({
+        contentIds: items.map((i) => i.product.id),
+        numItems: items.reduce((sum, i) => sum + i.quantity, 0),
+        value: total
+      });
+      clearCart();
+      router.push(`/order-success?orderId=${orderId}`);
+    } catch (err: any) {
+      console.error('COD order error:', err);
+      setErrorMsg(err?.message || 'Something went wrong. Please try again.');
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOnlinePayment = async () => {
     setErrorMsg('');
 
     if (items.length === 0) {
@@ -80,7 +214,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    // Meta Pixel: InitiateCheckout -- fires on button click, not page load
+    // Meta Pixel: InitiateCheckout
     trackInitiateCheckout({
       contentIds: items.map((i) => i.product.id),
       numItems: items.reduce((sum, i) => sum + i.quantity, 0),
@@ -375,7 +509,7 @@ export default function CheckoutPage() {
               borderRadius: 'var(--radius-xs)',
               letterSpacing: '0.04em'
             }}>
-              MAGIC CHECKOUT
+              SECURE CHECKOUT
             </span>
             <span style={{ color: 'var(--forest-green)', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
               <CheckCircle2 size={14} /> Free Express Delivery
@@ -390,7 +524,7 @@ export default function CheckoutPage() {
             Order Summary
           </h1>
           <p style={{ color: 'var(--text-body)', fontSize: '0.88rem' }}>
-            Review your items, then proceed to secure checkout.
+            Review your items, then choose your payment method.
           </p>
         </div>
 
@@ -522,31 +656,262 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Checkout button */}
-          <button
-            onClick={handleCheckout}
-            disabled={isSubmitting}
-            className="btn-primary"
-            style={{
-              width: '100%',
-              padding: '1.15rem',
-              fontSize: '1.05rem',
-              cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              boxShadow: 'var(--shadow-crimson)'
-            }}
-          >
-            {isSubmitting ? (
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                <Loader2 size={18} className="animate-spin" />
-                <span>Opening Secure Checkout...</span>
-              </span>
-            ) : (
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                <Lock size={17} />
-                <span>Proceed to Pay ₹{total}</span>
-              </span>
-            )}
-          </button>
+          {/* Payment method selection */}
+          {checkoutMode === 'select' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {/* Pay Online button */}
+              <button
+                onClick={handleOnlinePayment}
+                disabled={isSubmitting}
+                className="btn-primary"
+                style={{
+                  width: '100%',
+                  padding: '1.15rem',
+                  fontSize: '1.05rem',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  boxShadow: 'var(--shadow-crimson)'
+                }}
+              >
+                {isSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Opening Secure Checkout...</span>
+                  </span>
+                ) : (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <CreditCard size={17} />
+                    <span>Pay Online ₹{total}</span>
+                  </span>
+                )}
+              </button>
+
+              {/* Divider */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                margin: '0.25rem 0'
+              }}>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>OR</span>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+              </div>
+
+              {/* COD button */}
+              <button
+                onClick={() => setCheckoutMode('cod')}
+                disabled={isSubmitting}
+                style={{
+                  width: '100%',
+                  padding: '1.05rem',
+                  fontSize: '1rem',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-dark)',
+                  border: '2px solid var(--crimson-royal)',
+                  borderRadius: 'var(--radius-xs)',
+                  fontWeight: 700,
+                  fontFamily: 'var(--font-body)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <Banknote size={18} color="var(--crimson-royal)" />
+                <span>Cash on Delivery ₹{total}</span>
+              </button>
+            </div>
+          )}
+
+          {/* COD Address Form */}
+          {checkoutMode === 'cod' && (
+            <div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '1.5px solid var(--border-subtle)'
+              }}>
+                <h3 style={{ color: 'var(--text-dark)', fontSize: '1rem', fontWeight: 800, margin: 0 }}>
+                  <Banknote size={16} color="var(--crimson-royal)" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />
+                  Delivery Address
+                </h3>
+                <button
+                  onClick={() => { setCheckoutMode('select'); setErrorMsg(''); }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--crimson-royal)',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-body)',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Back to options
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                {/* Name */}
+                <div>
+                  <label style={labelStyle}>Full Name *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Priya Sharma"
+                    value={codForm.fullName}
+                    onChange={(e) => updateCodForm('fullName', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Phone + Email */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>Phone Number *</label>
+                    <input
+                      type="tel"
+                      placeholder="10-digit mobile"
+                      value={codForm.phone}
+                      onChange={(e) => updateCodForm('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      style={inputStyle}
+                      maxLength={10}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Email (optional)</label>
+                    <input
+                      type="email"
+                      placeholder="For order updates"
+                      value={codForm.email}
+                      onChange={(e) => updateCodForm('email', e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+
+                {/* Pincode */}
+                <div style={{ maxWidth: '200px' }}>
+                  <label style={labelStyle}>Pincode *</label>
+                  <input
+                    type="text"
+                    placeholder="6-digit pincode"
+                    value={codForm.pincode}
+                    onChange={(e) => updateCodForm('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    style={inputStyle}
+                    maxLength={6}
+                  />
+                </div>
+
+                {/* House/Flat */}
+                <div>
+                  <label style={labelStyle}>House / Flat / Building *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Flat 202, Sunrise Apartments"
+                    value={codForm.houseFlatBuilding}
+                    onChange={(e) => updateCodForm('houseFlatBuilding', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Road/Area */}
+                <div>
+                  <label style={labelStyle}>Road / Area / Colony *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. MG Road, Koramangala"
+                    value={codForm.roadAreaColony}
+                    onChange={(e) => updateCodForm('roadAreaColony', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Landmark */}
+                <div>
+                  <label style={labelStyle}>Landmark (optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Near City Mall"
+                    value={codForm.landmark}
+                    onChange={(e) => updateCodForm('landmark', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* City + State */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>City *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Bengaluru"
+                      value={codForm.city}
+                      onChange={(e) => updateCodForm('city', e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>State *</label>
+                    <select
+                      value={codForm.state}
+                      onChange={(e) => updateCodForm('state', e.target.value)}
+                      style={{ ...inputStyle, appearance: 'auto' }}
+                    >
+                      <option value="">Select State</option>
+                      {INDIAN_STATES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Place COD Order button */}
+                <button
+                  onClick={handleCodOrder}
+                  disabled={isSubmitting}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: '1.15rem',
+                    fontSize: '1.05rem',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    boxShadow: 'var(--shadow-crimson)',
+                    marginTop: '0.5rem'
+                  }}
+                >
+                  {isSubmitting ? (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Placing Order...</span>
+                    </span>
+                  ) : (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                      <Banknote size={17} />
+                      <span>Place COD Order ₹{total}</span>
+                    </span>
+                  )}
+                </button>
+
+                <p style={{
+                  fontSize: '0.76rem',
+                  color: 'var(--text-muted)',
+                  textAlign: 'center',
+                  marginTop: '0.25rem',
+                  lineHeight: 1.5
+                }}>
+                  Pay ₹{total} in cash when your order is delivered.
+                  <br />
+                  You will receive an order confirmation via SMS.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Trust badges */}
           <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
@@ -559,7 +924,7 @@ export default function CheckoutPage() {
               lineHeight: 1.4
             }}>
               <ShieldCheck size={16} color="var(--crimson-royal)" />
-              <span>256-Bit SSL Encrypted • UPI, Cards, COD Available</span>
+              <span>256-Bit SSL Encrypted • UPI, Cards, Net Banking, COD Available</span>
             </span>
           </div>
         </div>
