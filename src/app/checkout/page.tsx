@@ -198,6 +198,8 @@ export default function CheckoutPage() {
         value: total
       });
       clearCart();
+      // Small delay to ensure Meta Pixel Purchase event fires before navigation
+      await new Promise((resolve) => setTimeout(resolve, 500));
       router.push(`/order-success?orderId=${orderId}`);
     } catch (err: any) {
       console.error('COD order error:', err);
@@ -302,6 +304,7 @@ export default function CheckoutPage() {
           value: total
         });
         clearCart();
+        await new Promise((resolve) => setTimeout(resolve, 500));
         router.push(`/order-success?orderId=${orderId}`);
         return;
       }
@@ -427,6 +430,8 @@ export default function CheckoutPage() {
               value: total
             });
             clearCart();
+            // Small delay to ensure Meta Pixel Purchase event fires before navigation
+            await new Promise((resolve) => setTimeout(resolve, 500));
             router.push(`/order-success?orderId=${orderId}`);
           } catch (err: any) {
             console.error('Post-payment error:', err);
