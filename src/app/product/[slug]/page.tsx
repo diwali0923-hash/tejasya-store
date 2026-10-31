@@ -314,7 +314,7 @@ export default function ProductDetailPage() {
                   fontSize: '0.82rem'
                 }}
               >
-                <span>Get this + 3 more sets (52 pcs) for just <strong>₹1,699</strong></span>
+                <span>Get this + 3 more sets (52 pcs) for just <strong>₹1,999</strong></span>
                 <ChevronRight size={16} />
               </Link>
             )}

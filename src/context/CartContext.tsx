@@ -108,6 +108,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     discount = Math.round(subtotal * 0.1);
   }
 
+  // Floor: collection box (prod-royal-deepotsav-collection) final price must never go below ₹1,699
+  const hasCollection = items.some((i) => i.product.id === 'prod-royal-deepotsav-collection');
+  if (hasCollection) {
+    const maxDiscount = subtotal - 1699;
+    if (maxDiscount >= 0 && discount > maxDiscount) {
+      discount = maxDiscount;
+    }
+  }
+
   const shippingFee = 0; // Free express delivery across India!
   const total = Math.max(0, subtotal - discount + shippingFee);
 

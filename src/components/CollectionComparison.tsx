@@ -72,7 +72,7 @@ export default function CollectionComparison() {
 
   const totalIndividualPrice = COLLECTION_ITEMS.reduce((sum, item) => sum + item.individualPrice, 0); // 2446
   const totalMrp = COLLECTION_ITEMS.reduce((sum, item) => sum + item.mrp, 0); // 3896
-  const boxPrice = collectionProduct.price; // 1699
+  const boxPrice = collectionProduct.price; // 1999
   const totalSavings = totalIndividualPrice - boxPrice; // 747
 
   const handleAddBox = () => {
