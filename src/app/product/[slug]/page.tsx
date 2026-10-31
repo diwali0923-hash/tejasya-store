@@ -317,6 +317,32 @@ export default function ProductDetailPage() {
               </div>
             )}
 
+            {/* Trust Strip: COD + Free Shipping + Replacement */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gap: '0.5rem',
+              marginBottom: '1.25rem'
+            }}>
+              {[
+                { icon: '💵', label: 'Cash on Delivery', sub: 'Pay when delivered' },
+                { icon: '🚚', label: 'Free Shipping', sub: 'Express pan-India' },
+                { icon: '🔄', label: '100% Replacement', sub: 'If damaged in transit' }
+              ].map((item) => (
+                <div key={item.label} style={{
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-xs)',
+                  padding: '0.65rem 0.5rem',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>{item.icon}</div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-dark)' }}>{item.label}</div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{item.sub}</div>
+                </div>
+              ))}
+            </div>
+
             {/* Dispatch Banner */}
             <div style={{
               display: 'flex',
@@ -326,7 +352,7 @@ export default function ProductDetailPage() {
               border: '1.5px solid var(--gold-radiant)',
               borderRadius: 'var(--radius-xs)',
               padding: '0.85rem 1rem',
-              marginBottom: '1.75rem',
+              marginBottom: '1rem',
               fontSize: '0.88rem',
               color: 'var(--text-dark)',
               boxShadow: 'var(--shadow-subtle)'
@@ -335,6 +361,28 @@ export default function ProductDetailPage() {
               <div>
                 <strong style={{ color: 'var(--crimson-royal)' }}>Pre-Dhanteras Guarantee:</strong> {product.packageDetails.dispatchTime}
               </div>
+            </div>
+
+            {/* Urgency: Stock / Orders */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1.75rem',
+              fontSize: '0.82rem',
+              color: 'var(--text-body)'
+            }}>
+              <span style={{
+                display: 'inline-block',
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: '#EF4444',
+                animation: 'pulse 2s infinite'
+              }} />
+              <span>
+                <strong style={{ color: 'var(--crimson-royal)' }}>Limited stock</strong> — Only a few boxes left. 47 orders placed today.
+              </span>
             </div>
 
             {/* Specifications / Highlights */}
@@ -510,8 +558,8 @@ export default function ProductDetailPage() {
       {/* Sticky Mobile Buy Bar */}
       <div className="sticky-mobile-cta">
         <div style={{ flexShrink: 0 }}>
-          <span style={{ fontSize: '0.72rem', color: 'var(--crimson-royal)', display: 'block', fontWeight: 800 }}>
-            SAVE {product.discountPercentage}% TODAY
+          <span style={{ fontSize: '0.68rem', color: 'var(--crimson-royal)', display: 'block', fontWeight: 800 }}>
+            COD Available • SAVE {product.discountPercentage}%
           </span>
           <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>
             ₹{product.price * quantity}
