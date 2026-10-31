@@ -4,110 +4,77 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer style={{
-      background: '#140505',
+      background: '#1A1A1A',
       color: '#FFFFFF',
-      marginTop: '5rem',
-      padding: '4.5rem 0 2.5rem 0',
-      borderTop: '2px solid var(--gold-border)'
+      marginTop: '3rem',
+      padding: '3rem 0 2rem 0'
     }}>
       <div className="container">
-        {/* Editorial Brand & Columns */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '3rem',
-          paddingBottom: '3rem',
-          borderBottom: '1px solid rgba(212, 175, 55, 0.2)'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '2.5rem',
+          paddingBottom: '2.5rem',
+          borderBottom: '1px solid rgba(255,255,255,0.1)'
         }}>
           <div>
             <span style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '1.75rem',
+              fontSize: '1.4rem',
               fontWeight: 800,
-              letterSpacing: '0.12em',
-              color: 'var(--gold-radiant)',
+              letterSpacing: '0.1em',
+              color: '#D4AF37',
               display: 'block',
-              marginBottom: '1rem'
+              marginBottom: '0.75rem'
             }}>
               TEJASYA
             </span>
-            <p style={{ fontSize: '0.88rem', color: '#E8DEC9', lineHeight: 1.65, maxWidth: '280px' }}>
-              Handcrafted earthen lamps and smokeless jewel light for contemporary Indian spaces. Partnered with generational pottery clusters across Rajasthan and Uttar Pradesh.
+            <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+              Handcrafted earthen lamps and smokeless candles for modern Indian homes.
             </p>
           </div>
 
           <div>
-            <h5 style={{ fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem', color: '#FFE082', fontWeight: 700 }}>
-              Curated Collections
+            <h5 style={{ fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>
+              Collections
             </h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
-              <li>
-                <Link href="/product/the-royal-deepotsav-52-piece-artisanal-illumination-collection" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Royal Deepotsav 52-Piece Box
-                </Link>
-              </li>
-              <li>
-                <Link href="/product/handcrafted-jaipur-blue-pottery-ceramic-oil-diyas-set-of-6" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Jaipur Blue Pottery Diyas (6 Pcs)
-                </Link>
-              </li>
-              <li>
-                <Link href="/product/handpainted-terracotta-clay-diyas-gold-border-24-pack" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Handpainted Mitti Diyas (24 Pcs)
-                </Link>
-              </li>
-              <li>
-                <Link href="/product/jewel-toned-glass-jelly-gel-tealight-candles-pack-of-12" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Jewel Glass Gel Candles (12 Pcs)
-                </Link>
-              </li>
-              <li>
-                <Link href="/product/magic-light-festive-duo-water-sensor-led-diyas-3d-reflection-shadow-cups-24-pack" style={{ color: '#E8DEC9', textDecoration: 'none' }}>
-                  Magic Light Festive Duo (24 Pcs)
-                </Link>
-              </li>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.82rem' }}>
+              <li><Link href="/product/the-royal-deepotsav-52-piece-artisanal-illumination-collection" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>52-Piece Collection Box</Link></li>
+              <li><Link href="/product/handcrafted-jaipur-blue-pottery-ceramic-oil-diyas-set-of-6" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Blue Pottery Diyas</Link></li>
+              <li><Link href="/product/handpainted-terracotta-clay-diyas-gold-border-24-pack" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Mitti Diyas</Link></li>
+              <li><Link href="/product/jewel-toned-glass-jelly-gel-tealight-candles-pack-of-12" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Gel Candles</Link></li>
+              <li><Link href="/product/magic-light-festive-duo-water-sensor-led-diyas-3d-reflection-shadow-cups-24-pack" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>Magic Light Duo</Link></li>
             </ul>
           </div>
 
           <div>
-            <h5 style={{ fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem', color: '#FFE082', fontWeight: 700 }}>
-              Dispatch & Logistics
+            <h5 style={{ fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>
+              Shipping
             </h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem', color: '#E8DEC9' }}>
-              <li>Dispatches within 24 Hours</li>
-              <li>Guaranteed Pre-Dhanteras Delivery</li>
-              <li>Multi-layer Bubble Cushion Packaging</li>
-              <li>100% Transit Damage Replacement Policy</li>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)' }}>
+              <li>Free express delivery</li>
+              <li>24-hour dispatch</li>
+              <li>Bubble-wrap packaging</li>
+              <li>100% replacement guarantee</li>
+              <li>Cash on delivery available</li>
             </ul>
-          </div>
-
-          <div>
-            <h5 style={{ fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem', color: '#FFE082', fontWeight: 700 }}>
-              Client Care
-            </h5>
-            <p style={{ fontSize: '0.88rem', color: '#E8DEC9', lineHeight: 1.65 }}>
-              For order modifications, live tracking status, or courier assistance, please contact our dispatch team with your order reference.
-            </p>
           </div>
         </div>
 
-        {/* Bottom */}
         <div style={{
-          paddingTop: '2rem',
+          paddingTop: '1.5rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '1rem',
-          fontSize: '0.8rem',
-          color: 'rgba(232, 222, 201, 0.6)'
+          gap: '0.75rem',
+          fontSize: '0.75rem',
+          color: 'rgba(255,255,255,0.35)'
         }}>
-          <div>
-            © {new Date().getFullYear()} Tejasya Living. Handcrafted in India for Deepavali.
-          </div>
-          <div style={{ color: 'var(--gold-radiant)' }}>
-            Free Express Pan-India Shipping on All Pre-Dhanteras Orders
-          </div>
+          <span>&copy; {new Date().getFullYear()} Tejasya. Made in India.</span>
+          <Link href="/privacy-policy" style={{ color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>
+            Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>

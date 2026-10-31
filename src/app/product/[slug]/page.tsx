@@ -4,22 +4,19 @@ import React, { useState, useEffect } from 'react';
 import { notFound, useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getProductBySlug } from '@/data/products';
+import { getProductBySlug, PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import {
   ShieldCheck,
   CheckCircle2,
   Package,
-  Clock,
-  ArrowLeft,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Star,
   Truck,
-  Sparkles,
-  ArrowRight
+  ArrowLeft,
 } from 'lucide-react';
-import CollectionComparison from '@/components/CollectionComparison';
-import InteractiveCollectionHotspots from '@/components/InteractiveCollectionHotspots';
 import { trackViewContent, trackAddToCart } from '@/lib/metaPixel';
 
 export default function ProductDetailPage() {
@@ -29,13 +26,28 @@ export default function ProductDetailPage() {
   const product = getProductBySlug(slug);
 
   const { addToCart, buyNow } = useCart();
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [openAccordion, setOpenAccordion] = useState<'contents' | 'transit' | null>('contents');
+
+  // Live viewers
+  const [viewers, setViewers] = useState(0);
+  useEffect(() => {
+    setViewers(Math.floor(Math.random() * 15) + 22);
+    const interval = setInterval(() => {
+      setViewers((v) => {
+        const delta = Math.floor(Math.random() * 5) - 2;
+        return Math.max(12, Math.min(45, v + delta));
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (!product) {
     notFound();
   }
+
+  const images = product.images;
 
   // Meta Pixel: ViewContent
   useEffect(() => {
@@ -68,437 +80,364 @@ export default function ProductDetailPage() {
     router.push('/checkout');
   };
 
+  const nextSlide = () => setCurrentSlide((s) => (s + 1) % images.length);
+  const prevSlide = () => setCurrentSlide((s) => (s - 1 + images.length) % images.length);
+
   return (
-    <div style={{ padding: '2.5rem 0 6rem 0' }}>
-      <div className="container">
-        {/* Navigation Breadcrumb */}
-        <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-          <Link href="/" style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', textDecoration: 'none' }}>
-            <ArrowLeft size={14} /> Catalog
+    <div style={{ paddingBottom: '5rem' }}>
+      {/* Trust Bar */}
+      <div className="trust-bar">
+        <span className="trust-bar-item">
+          <Truck size={14} /> Free Shipping
+        </span>
+        <span className="trust-bar-item">
+          <ShieldCheck size={14} /> Replacement Guarantee
+        </span>
+        <span className="trust-bar-item">
+          COD Available
+        </span>
+      </div>
+
+      <div className="container" style={{ paddingTop: '1rem' }}>
+        {/* Breadcrumb */}
+        <div style={{ marginBottom: '1rem' }}>
+          <Link href="/" style={{
+            color: 'var(--text-muted)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+            textDecoration: 'none',
+            fontSize: '0.82rem'
+          }}>
+            <ArrowLeft size={14} /> Back
           </Link>
-          <span style={{ color: 'var(--border-subtle)' }}>/</span>
-          <span style={{ color: 'var(--crimson-royal)', fontWeight: 700 }}>{product.name}</span>
         </div>
 
-        {/* Product Grid */}
+        {/* Product Layout */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '3.5rem',
+          gridTemplateColumns: '1fr',
+          gap: '2rem',
           alignItems: 'start'
         }}>
-          {/* Left Gallery */}
-          <div>
-            {product.category === 'bundle' ? (
-              <InteractiveCollectionHotspots
-                mainImage={product.images[selectedImageIndex] || product.images[0]}
-                alt={product.name}
-              />
-            ) : (
-              <div
-                className="festive-card"
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '1/1',
-                  overflow: 'hidden',
-                  marginBottom: '1rem',
-                  borderRadius: 'var(--radius-xs)'
-                }}
-              >
-                <Image
-                  src={product.images[selectedImageIndex] || product.images[0]}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 550px"
-                  style={{ objectFit: 'cover' }}
-                />
+          {/* IMAGE SLIDESHOW */}
+          <div style={{ maxWidth: '550px', margin: '0 auto', width: '100%' }}>
+            <div className="slideshow-container">
+              {images.map((img, idx) => (
+                <div
+                  key={idx}
+                  className="slideshow-image"
+                  style={{ opacity: currentSlide === idx ? 1 : 0 }}
+                >
+                  <Image
+                    src={img}
+                    alt={`${product.name} - Image ${idx + 1}`}
+                    fill
+                    priority={idx === 0}
+                    sizes="(max-width: 768px) 100vw, 550px"
+                    style={{ objectFit: 'cover' }}
+                  />
+                </div>
+              ))}
 
-                <span style={{
-                  position: 'absolute',
-                  top: '1rem',
-                  left: '1rem',
-                  background: 'var(--crimson-royal)',
-                  color: '#FFFFFF',
-                  fontSize: '0.8rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.04em',
-                  padding: '0.4rem 0.9rem',
-                  borderRadius: 'var(--radius-xs)'
-                }}>
-                  SAVE {product.discountPercentage}%
-                </span>
-              </div>
-            )}
-
-            {/* Thumbnail Strip */}
-            {product.images.length > 1 && (
-              <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-                {product.images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedImageIndex(idx)}
-                    style={{
-                      position: 'relative',
-                      width: '74px',
-                      height: '74px',
-                      borderRadius: 'var(--radius-xs)',
-                      overflow: 'hidden',
-                      border: selectedImageIndex === idx ? '2px solid var(--crimson-royal)' : '1px solid var(--border-subtle)',
-                      background: 'transparent',
-                      cursor: 'pointer',
-                      flexShrink: 0,
-                      opacity: selectedImageIndex === idx ? 1 : 0.65,
-                      transition: 'opacity 0.2s'
-                    }}
-                  >
-                    <Image src={img} alt="" fill sizes="74px" style={{ objectFit: 'cover' }} />
+              {images.length > 1 && (
+                <>
+                  <button onClick={prevSlide} className="slideshow-arrow slideshow-arrow-left" aria-label="Previous">
+                    <ChevronLeft size={20} />
                   </button>
-                ))}
-              </div>
-            )}
+                  <button onClick={nextSlide} className="slideshow-arrow slideshow-arrow-right" aria-label="Next">
+                    <ChevronRight size={20} />
+                  </button>
+                  <div className="slideshow-dots">
+                    {images.map((_, idx) => (
+                      <button
+                        key={idx}
+                        className={`slideshow-dot ${currentSlide === idx ? 'active' : ''}`}
+                        onClick={() => setCurrentSlide(idx)}
+                        aria-label={`Image ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
 
-            {/* Dispatch & Packaging Notice */}
-            <div className="festive-card" style={{
-              padding: '1.25rem',
-              marginTop: '1.5rem',
-              display: 'flex',
-              gap: '1rem',
-              background: 'var(--bg-surface-warm)'
-            }}>
-              <ShieldCheck size={24} color="var(--crimson-royal)" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <div>
-                <h4 style={{ color: 'var(--crimson-royal)', fontSize: '0.92rem', fontWeight: 700, marginBottom: '0.25rem' }}>
-                  Reinforced Transit Cushioning
-                </h4>
-                <p style={{ color: 'var(--text-body)', fontSize: '0.82rem', lineHeight: 1.55 }}>
-                  {product.packageDetails.packagingNotice}
-                </p>
-              </div>
+              {/* Discount badge */}
+              <span style={{
+                position: 'absolute',
+                top: '12px',
+                left: '12px',
+                background: 'var(--crimson-royal)',
+                color: '#FFF',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '0.25rem 0.6rem',
+                borderRadius: 'var(--radius-sm)',
+                zIndex: 5
+              }}>
+                SAVE {product.discountPercentage}%
+              </span>
+
+              {/* Image counter */}
+              <span style={{
+                position: 'absolute',
+                bottom: '12px',
+                right: '12px',
+                background: 'rgba(0,0,0,0.5)',
+                color: '#FFF',
+                fontSize: '0.7rem',
+                padding: '0.2rem 0.5rem',
+                borderRadius: 'var(--radius-sm)',
+                zIndex: 5
+              }}>
+                {currentSlide + 1} / {images.length}
+              </span>
             </div>
           </div>
 
-          {/* Right Product Details */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-              <span className="festive-pill-gold">
-                {product.category === 'bundle' ? 'Curated Festive Hamper' : product.category.toUpperCase()}
-              </span>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#D4AF37', fontSize: '0.88rem' }}>
-                <Star size={15} fill="currentColor" />
-                <span style={{ fontWeight: 800, color: 'var(--text-dark)' }}>{product.rating}</span>
-                <span style={{ color: 'var(--text-muted)' }}>({product.reviewCount} Reviews)</span>
-              </div>
+          {/* PRODUCT DETAILS */}
+          <div style={{ maxWidth: '550px', margin: '0 auto', width: '100%' }}>
+            {/* Live viewers */}
+            <div className="live-indicator" style={{ marginBottom: '0.65rem' }}>
+              <span className="live-dot" />
+              <span>{viewers} people viewing this</span>
             </div>
 
+            {/* Category pill */}
+            <span style={{
+              fontSize: '0.68rem',
+              fontWeight: 700,
+              color: 'var(--text-muted)',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              display: 'block',
+              marginBottom: '0.4rem'
+            }}>
+              {product.category === 'bundle' ? 'BESTSELLER - CURATED HAMPER' : product.category.toUpperCase()}  |  {product.piecesCount} PIECES
+            </span>
+
             <h1 style={{
-              fontSize: 'clamp(1.9rem, 3.8vw, 2.65rem)',
-              color: 'var(--text-dark)',
+              fontSize: 'clamp(1.5rem, 3.5vw, 2rem)',
               lineHeight: 1.2,
-              marginBottom: '0.75rem',
+              marginBottom: '0.5rem',
               fontWeight: 800
             }}>
               {product.name}
             </h1>
 
-            <p style={{ color: 'var(--text-body)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-              {product.tagline}
-            </p>
+            {/* Rating */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', gap: '2px', color: '#D4AF37' }}>
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={14} fill="currentColor" />
+                ))}
+              </div>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>{product.rating}</span>
+              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>({product.reviewCount} reviews)</span>
+            </div>
 
-            {/* Price Row */}
+            {/* Price */}
             <div style={{
               display: 'flex',
               alignItems: 'baseline',
-              gap: '1rem',
-              padding: '1.25rem 0',
-              borderTop: '1px solid var(--border-subtle)',
+              gap: '0.75rem',
+              paddingBottom: '1rem',
               borderBottom: '1px solid var(--border-subtle)',
-              marginBottom: '1.75rem'
+              marginBottom: '1rem'
             }}>
-              <span style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--crimson-royal)' }}>
+              <span style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--crimson-royal)' }}>
                 ₹{product.price}
               </span>
-              <span style={{ fontSize: '1.2rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
+              <span style={{ fontSize: '1.1rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
                 ₹{product.originalPrice}
               </span>
               <span style={{
-                background: 'rgba(139, 24, 24, 0.1)',
+                background: 'rgba(139, 24, 24, 0.08)',
                 color: 'var(--crimson-royal)',
-                borderRadius: 'var(--radius-xs)',
-                padding: '0.3rem 0.75rem',
-                fontSize: '0.82rem',
-                fontWeight: 800
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.2rem 0.5rem',
+                fontSize: '0.78rem',
+                fontWeight: 700
               }}>
-                SAVE ₹{product.originalPrice - product.price} ({product.discountPercentage}% OFF)
+                {product.discountPercentage}% OFF
               </span>
             </div>
 
-            {/* Price Anchor Callout for Collection Box */}
-            {product.category === 'bundle' && (
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(82, 12, 12, 0.08) 0%, rgba(212, 175, 55, 0.15) 100%)',
-                border: '1.5px solid var(--gold-radiant)',
-                borderRadius: 'var(--radius-xs)',
-                padding: '1.1rem 1.25rem',
-                marginBottom: '1.75rem',
-                boxShadow: '0 4px 15px rgba(212, 175, 55, 0.15)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--crimson-royal)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <Sparkles size={14} /> BUNDLE SAVINGS & PRICE ANCHOR
-                  </span>
-                  <span style={{
-                    background: '#047857',
-                    color: '#FFFFFF',
-                    fontWeight: 900,
-                    fontSize: '0.74rem',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '3px'
-                  }}>
-                    SAVE ₹747 EXTRA
-                  </span>
-                </div>
-                <div style={{ fontSize: '0.88rem', color: 'var(--text-dark)', lineHeight: 1.5 }}>
-                  <div>Purchased separately: <strong style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>₹2,446</strong> (4 Individual Listings)</div>
-                  <div style={{ marginTop: '0.25rem' }}>
-                    Master Box Offer: <strong style={{ color: 'var(--crimson-royal)', fontSize: '1.15rem' }}>₹1,699</strong>
-                    <span style={{ color: '#047857', fontWeight: 700, marginLeft: '0.5rem' }}>• 31% Cheaper than buying separately!</span>
-                  </div>
-                </div>
-                <a
-                  href="#collection-comparison"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    marginTop: '0.75rem',
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
-                    color: 'var(--crimson-royal)',
-                    textDecoration: 'underline'
-                  }}
-                >
-                  <span>See full product comparison & savings breakdown ↓</span>
-                </a>
+            {/* Trust badges row */}
+            <div className="trust-badges" style={{ marginBottom: '1.25rem' }}>
+              <div className="trust-badge">
+                <span className="trust-badge-icon">💵</span>
+                <span className="trust-badge-label">Cash on Delivery</span>
+                <span className="trust-badge-sub">Pay at doorstep</span>
               </div>
+              <div className="trust-badge">
+                <span className="trust-badge-icon">🚚</span>
+                <span className="trust-badge-label">Free Shipping</span>
+                <span className="trust-badge-sub">Express pan-India</span>
+              </div>
+              <div className="trust-badge">
+                <span className="trust-badge-icon">🔄</span>
+                <span className="trust-badge-label">Free Replacement</span>
+                <span className="trust-badge-sub">If damaged in transit</span>
+              </div>
+            </div>
+
+            {/* Dispatch info */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              padding: '0.75rem 0.85rem',
+              background: 'var(--bg-surface-warm)',
+              borderRadius: 'var(--radius-sm)',
+              marginBottom: '1.25rem',
+              fontSize: '0.82rem'
+            }}>
+              <Truck size={16} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
+              <span><strong>Dispatches within 24 hours.</strong> Delivery before Dhanteras guaranteed.</span>
+            </div>
+
+            {/* Upsell for individual products */}
+            {product.category !== 'bundle' && (
+              <Link
+                href={`/product/${PRODUCTS[0].slug}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.75rem 0.85rem',
+                  background: 'var(--gold-tint)',
+                  border: '1px solid var(--gold-border)',
+                  borderRadius: 'var(--radius-sm)',
+                  marginBottom: '1.25rem',
+                  textDecoration: 'none',
+                  color: 'var(--text-dark)',
+                  fontSize: '0.82rem'
+                }}
+              >
+                <span>Get this + 3 more sets (52 pcs) for just <strong>₹1,699</strong></span>
+                <ChevronRight size={16} />
+              </Link>
             )}
 
-            {/* Upsell for Individual Products */}
-            {product.category !== 'bundle' && (
+            {/* Quantity */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-body)' }}>Qty:</span>
               <div style={{
-                background: 'linear-gradient(135deg, rgba(82, 12, 12, 0.08) 0%, rgba(212, 175, 55, 0.12) 100%)',
-                border: '1.5px solid var(--gold-radiant)',
-                borderRadius: 'var(--radius-xs)',
-                padding: '0.9rem 1.15rem',
-                marginBottom: '1.75rem',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '0.75rem'
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                overflow: 'hidden'
               }}>
-                <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--crimson-royal)', textTransform: 'uppercase' }}>
-                    PART OF THE ROYAL DEEPOTSAV COLLECTION
-                  </span>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-dark)', margin: '0.2rem 0 0 0' }}>
-                    Get this plus 3 more curated lighting suites (52 Pcs total) for just <strong>₹1,699</strong>.
-                  </p>
-                </div>
-                <Link
-                  href="/product/the-royal-deepotsav-52-piece-artisanal-illumination-collection"
-                  className="btn-gold"
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    width: '36px',
+                    height: '36px',
+                    cursor: 'pointer',
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    color: 'var(--text-dark)'
+                  }}
                 >
-                  <span>Upgrade to Box (Save ₹747)</span>
-                </Link>
+                  -
+                </button>
+                <span style={{ padding: '0 0.75rem', fontWeight: 700, fontSize: '0.9rem' }}>
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    width: '36px',
+                    height: '36px',
+                    cursor: 'pointer',
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    color: 'var(--text-dark)'
+                  }}
+                >
+                  +
+                </button>
               </div>
-            )}
-
-            {/* Trust Strip: COD + Free Shipping + Replacement */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr 1fr',
-              gap: '0.5rem',
-              marginBottom: '1.25rem'
-            }}>
-              {[
-                { icon: '💵', label: 'Cash on Delivery', sub: 'Pay when delivered' },
-                { icon: '🚚', label: 'Free Shipping', sub: 'Express pan-India' },
-                { icon: '🔄', label: '100% Replacement', sub: 'If damaged in transit' }
-              ].map((item) => (
-                <div key={item.label} style={{
-                  background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-xs)',
-                  padding: '0.65rem 0.5rem',
-                  textAlign: 'center'
-                }}>
-                  <div style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>{item.icon}</div>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-dark)' }}>{item.label}</div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{item.sub}</div>
-                </div>
-              ))}
             </div>
 
-            {/* Dispatch Banner */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              background: 'var(--bg-surface)',
-              border: '1.5px solid var(--gold-radiant)',
-              borderRadius: 'var(--radius-xs)',
-              padding: '0.85rem 1rem',
-              marginBottom: '1rem',
+            {/* CTA Buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.5rem' }}>
+              <button
+                onClick={handleBuyNow}
+                className="btn-primary"
+                style={{ width: '100%', padding: '1rem', fontSize: '1rem', fontWeight: 800 }}
+              >
+                BUY NOW — ₹{product.price * quantity}
+              </button>
+              <button
+                onClick={() => handleAddToCart(quantity)}
+                className="btn-secondary"
+                style={{ width: '100%', padding: '0.85rem', fontSize: '0.9rem' }}
+              >
+                Add to Bag
+              </button>
+              <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Cash on Delivery available. Free shipping across India.
+              </p>
+            </div>
+
+            {/* Description */}
+            <p style={{
               fontSize: '0.88rem',
-              color: 'var(--text-dark)',
-              boxShadow: 'var(--shadow-subtle)'
+              color: 'var(--text-body)',
+              lineHeight: 1.65,
+              marginBottom: '1.5rem'
             }}>
-              <Clock size={18} color="var(--crimson-royal)" style={{ flexShrink: 0 }} />
-              <div>
-                <strong style={{ color: 'var(--crimson-royal)' }}>Pre-Dhanteras Guarantee:</strong> {product.packageDetails.dispatchTime}
-              </div>
-            </div>
+              {product.tagline}
+            </p>
 
-            {/* Urgency: Stock / Orders */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '1.75rem',
-              fontSize: '0.82rem',
-              color: 'var(--text-body)'
-            }}>
-              <span style={{
-                display: 'inline-block',
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#EF4444',
-                animation: 'pulse 2s infinite'
-              }} />
-              <span>
-                <strong style={{ color: 'var(--crimson-royal)' }}>Limited stock</strong> — Only a few boxes left. 47 orders placed today.
-              </span>
-            </div>
-
-            {/* Specifications / Highlights */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h4 style={{ color: 'var(--crimson-royal)', fontSize: '0.85rem', marginBottom: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 800 }}>
-                Specifications & Inclusions
-              </h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            {/* Features */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Highlights
+              </h3>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
                 {product.features.map((feat, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', fontSize: '0.9rem', color: 'var(--text-body)' }}>
-                    <CheckCircle2 size={16} color="var(--crimson-royal)" style={{ flexShrink: 0, marginTop: '3px' }} />
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', fontSize: '0.85rem', color: 'var(--text-body)' }}>
+                    <CheckCircle2 size={15} color="var(--crimson-royal)" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <span style={{ lineHeight: 1.45 }}>{feat}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Quantity & CTA */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '0.88rem', color: 'var(--text-body)', fontWeight: 600 }}>QUANTITY:</span>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  background: 'var(--bg-surface)',
-                  border: '1.5px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-xs)',
-                  padding: '2px'
-                }}>
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--text-dark)',
-                      width: '34px',
-                      height: '34px',
-                      cursor: 'pointer',
-                      fontSize: '1.2rem',
-                      fontWeight: 700
-                    }}
-                  >
-                    -
-                  </button>
-                  <span style={{ padding: '0 0.95rem', fontWeight: 800, color: 'var(--text-dark)', fontSize: '0.95rem' }}>
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--text-dark)',
-                      width: '34px',
-                      height: '34px',
-                      cursor: 'pointer',
-                      fontSize: '1.2rem',
-                      fontWeight: 700
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <button
-                  onClick={() => handleAddToCart(quantity)}
-                  className="btn-secondary"
-                  style={{ padding: '1rem', fontSize: '0.9rem' }}
-                >
-                  Add to Bag
-                </button>
-                <button
-                  onClick={handleBuyNow}
-                  className="btn-primary"
-                  style={{ padding: '1rem', fontSize: '0.9rem' }}
-                >
-                  Buy Now — Instant Checkout
-                </button>
-              </div>
-            </div>
-
             {/* Accordions */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div className="festive-card" style={{ overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
                 <button
                   onClick={() => setOpenAccordion(openAccordion === 'contents' ? null : 'contents')}
                   style={{
                     width: '100%',
-                    padding: '1.1rem 1.25rem',
+                    padding: '0.85rem 1rem',
                     background: 'transparent',
                     border: 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    color: 'var(--text-dark)',
-                    fontSize: '0.92rem',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
                     fontWeight: 700,
-                    cursor: 'pointer'
+                    color: 'var(--text-dark)'
                   }}
                 >
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Package size={17} color="var(--crimson-royal)" /> What’s Inside The Set ({product.piecesCount} Pieces)
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Package size={15} /> What&apos;s in the Box ({product.piecesCount} pcs)
                   </span>
-                  <ChevronDown
-                    size={17}
-                    style={{
-                      transform: openAccordion === 'contents' ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.2s'
-                    }}
-                  />
+                  <ChevronDown size={15} style={{ transform: openAccordion === 'contents' ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                 </button>
                 {openAccordion === 'contents' && (
-                  <div style={{ padding: '0 1.25rem 1.25rem 1.25rem', borderTop: '1px solid var(--border-subtle)' }}>
-                    <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem', marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.88rem', color: 'var(--text-body)' }}>
+                  <div style={{ padding: '0 1rem 1rem', borderTop: '1px solid var(--border-subtle)' }}>
+                    <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem', marginTop: '0.65rem', display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.82rem', color: 'var(--text-body)' }}>
                       {product.packageDetails.contents.map((item, idx) => (
                         <li key={idx}>{item}</li>
                       ))}
@@ -507,38 +446,32 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              <div className="festive-card" style={{ overflow: 'hidden' }}>
+              <div style={{ border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
                 <button
                   onClick={() => setOpenAccordion(openAccordion === 'transit' ? null : 'transit')}
                   style={{
                     width: '100%',
-                    padding: '1.1rem 1.25rem',
+                    padding: '0.85rem 1rem',
                     background: 'transparent',
                     border: 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    color: 'var(--text-dark)',
-                    fontSize: '0.92rem',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
                     fontWeight: 700,
-                    cursor: 'pointer'
+                    color: 'var(--text-dark)'
                   }}
                 >
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <ShieldCheck size={17} color="var(--crimson-royal)" /> Packaging & Breakage Replacement Policy
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <ShieldCheck size={15} /> Packaging & Replacement Policy
                   </span>
-                  <ChevronDown
-                    size={17}
-                    style={{
-                      transform: openAccordion === 'transit' ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.2s'
-                    }}
-                  />
+                  <ChevronDown size={15} style={{ transform: openAccordion === 'transit' ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                 </button>
                 {openAccordion === 'transit' && (
-                  <div style={{ padding: '0 1.25rem 1.25rem 1.25rem', borderTop: '1px solid var(--border-subtle)' }}>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-body)', lineHeight: 1.6, marginTop: '0.75rem' }}>
-                      Earthen clay and glass are delicate sacred crafts. Every item is wrapped in shockproof bubble air cushions. In the rare event that any piece arrives damaged, simply message our support with parcel proof and we will immediately dispatch a free replacement parcel!
+                  <div style={{ padding: '0 1rem 1rem', borderTop: '1px solid var(--border-subtle)' }}>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--text-body)', lineHeight: 1.6, marginTop: '0.65rem' }}>
+                      Every item is wrapped in shockproof bubble air cushions. If any piece arrives damaged, message our support with a photo and we will immediately dispatch a free replacement.
                     </p>
                   </div>
                 )}
@@ -548,37 +481,30 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* Interactive Value Comparison Section for Collection Box */}
-      {product.category === 'bundle' && (
-        <div style={{ marginTop: '4rem' }}>
-          <CollectionComparison />
-        </div>
-      )}
-
-      {/* Sticky Mobile Buy Bar */}
+      {/* STICKY MOBILE CTA */}
       <div className="sticky-mobile-cta">
-        <div style={{ flexShrink: 0 }}>
-          <span style={{ fontSize: '0.68rem', color: 'var(--crimson-royal)', display: 'block', fontWeight: 800 }}>
-            COD Available • SAVE {product.discountPercentage}%
+        <div>
+          <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block' }}>
+            COD Available
           </span>
-          <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>
+          <span style={{ fontSize: '1.15rem', fontWeight: 800 }}>
             ₹{product.price * quantity}
           </span>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem', flex: 1, justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button
             onClick={() => handleAddToCart(quantity)}
             className="btn-secondary"
-            style={{ padding: '0.7rem 0.85rem', fontSize: '0.8rem', minHeight: '44px', whiteSpace: 'nowrap' }}
+            style={{ padding: '0.6rem 0.75rem', fontSize: '0.78rem', minHeight: '40px' }}
           >
             + Bag
           </button>
           <button
             onClick={handleBuyNow}
             className="btn-primary"
-            style={{ padding: '0.7rem 1.15rem', fontSize: '0.84rem', minHeight: '44px', whiteSpace: 'nowrap' }}
+            style={{ padding: '0.6rem 1.1rem', fontSize: '0.82rem', minHeight: '40px' }}
           >
-            <span>⚡ Buy Now</span>
+            Buy Now
           </button>
         </div>
       </div>
