@@ -65,63 +65,70 @@ export default function HomePage() {
             gap: '2rem',
             alignItems: 'start'
           }}>
-            {/* Image Slideshow */}
-            <div className="slideshow-container" style={{ maxWidth: '600px', margin: '0 auto' }}>
-              {heroImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="slideshow-image"
-                  style={{ opacity: heroSlide === idx ? 1 : 0 }}
-                >
-                  <Image
-                    src={img}
-                    alt={`${featuredProduct.name} - Image ${idx + 1}`}
-                    fill
-                    priority={idx === 0}
-                    sizes="(max-width: 768px) 100vw, 600px"
-                    style={{ objectFit: 'cover' }}
-                  />
-                </div>
-              ))}
-
-              {heroImages.length > 1 && (
-                <>
-                  <button onClick={prevSlide} className="slideshow-arrow slideshow-arrow-left" aria-label="Previous image">
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button onClick={nextSlide} className="slideshow-arrow slideshow-arrow-right" aria-label="Next image">
-                    <ChevronRight size={20} />
-                  </button>
-                  <div className="slideshow-dots">
-                    {heroImages.map((_, idx) => (
-                      <button
-                        key={idx}
-                        className={`slideshow-dot ${heroSlide === idx ? 'active' : ''}`}
-                        onClick={() => setHeroSlide(idx)}
-                        aria-label={`Go to image ${idx + 1}`}
-                      />
-                    ))}
+            {/* Image Slideshow -- links to product page */}
+            <Link href={`/product/${featuredProduct.slug}`} style={{ display: 'block', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+              <div className="slideshow-container">
+                {heroImages.map((img, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      opacity: heroSlide === idx ? 1 : 0,
+                      transition: 'opacity 0.3s ease',
+                      pointerEvents: heroSlide === idx ? 'auto' : 'none'
+                    }}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${featuredProduct.name} - Image ${idx + 1}`}
+                      fill
+                      priority={idx === 0}
+                      sizes="(max-width: 768px) 100vw, 600px"
+                      style={{ objectFit: 'cover' }}
+                    />
                   </div>
-                </>
-              )}
+                ))}
 
-              {/* Save badge */}
-              <span style={{
-                position: 'absolute',
-                top: '12px',
-                left: '12px',
-                background: 'var(--crimson-royal)',
-                color: '#FFF',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                padding: '0.3rem 0.65rem',
-                borderRadius: 'var(--radius-sm)',
-                zIndex: 5,
-                letterSpacing: '0.03em'
-              }}>
-                SAVE {featuredProduct.discountPercentage}%
-              </span>
-            </div>
+                {heroImages.length > 1 && (
+                  <>
+                    <button onClick={(e) => { e.preventDefault(); prevSlide(); }} className="slideshow-arrow slideshow-arrow-left" aria-label="Previous image">
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button onClick={(e) => { e.preventDefault(); nextSlide(); }} className="slideshow-arrow slideshow-arrow-right" aria-label="Next image">
+                      <ChevronRight size={20} />
+                    </button>
+                    <div className="slideshow-dots">
+                      {heroImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          className={`slideshow-dot ${heroSlide === idx ? 'active' : ''}`}
+                          onClick={(e) => { e.preventDefault(); setHeroSlide(idx); }}
+                          aria-label={`Go to image ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* Save badge */}
+                <span style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  background: 'var(--crimson-royal)',
+                  color: '#FFF',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '0.3rem 0.65rem',
+                  borderRadius: 'var(--radius-sm)',
+                  zIndex: 5,
+                  letterSpacing: '0.03em'
+                }}>
+                  SAVE {featuredProduct.discountPercentage}%
+                </span>
+              </div>
+            </Link>
 
             {/* Product Info */}
             <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
