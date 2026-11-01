@@ -361,39 +361,52 @@ export default function CheckoutPage() {
             };
             let paymentMethod: 'RAZORPAY' | 'COD' = 'RAZORPAY';
 
-            try {
-              const orderRes = await fetch('/api/razorpay/fetch-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id })
-              });
-              const rzpOrder = await orderRes.json();
+            // Retry up to 3 times to fetch customer details from Razorpay
+            for (let attempt = 1; attempt <= 3; attempt++) {
+              try {
+                const orderRes = await fetch('/api/razorpay/fetch-order', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id })
+                });
 
-              // Magic Checkout returns customer_details with shipping_address
-              const cd = rzpOrder.customer_details || {};
-              const sa = cd.shipping_address || {};
+                if (!orderRes.ok) {
+                  throw new Error(`fetch-order returned ${orderRes.status}`);
+                }
 
-              customerName = cd.name || sa.name || 'Customer';
-              customerPhone = (cd.contact || sa.contact || '').replace('+91', '').replace(/\D/g, '');
-              customerEmail = cd.email || '';
+                const rzpOrder = await orderRes.json();
 
-              shippingAddress = {
-                fullName: sa.name || customerName,
-                phone: (sa.contact || customerPhone).replace('+91', '').replace(/\D/g, ''),
-                pincode: sa.zipcode || '',
-                houseFlatBuilding: sa.line1 || '',
-                roadAreaColony: sa.line2 || '',
-                landmark: sa.landmark || '',
-                city: sa.city || '',
-                state: sa.state || ''
-              };
+                // Magic Checkout returns customer_details with shipping_address
+                const cd = rzpOrder.customer_details || {};
+                const sa = cd.shipping_address || {};
 
-              // Check if COD
-              if (rzpOrder.payment_method === 'cod' || rzpOrder.status === 'placed') {
-                paymentMethod = 'COD';
+                customerName = cd.name || sa.name || 'Customer';
+                customerPhone = (cd.contact || sa.contact || '').replace('+91', '').replace(/\D/g, '');
+                customerEmail = cd.email || '';
+
+                shippingAddress = {
+                  fullName: sa.name || customerName,
+                  phone: (sa.contact || customerPhone).replace('+91', '').replace(/\D/g, ''),
+                  pincode: sa.zipcode || '',
+                  houseFlatBuilding: sa.line1 || '',
+                  roadAreaColony: sa.line2 || '',
+                  landmark: sa.landmark || '',
+                  city: sa.city || '',
+                  state: sa.state || ''
+                };
+
+                // Check if COD
+                if (rzpOrder.payment_method === 'cod' || rzpOrder.status === 'placed') {
+                  paymentMethod = 'COD';
+                }
+
+                break; // Success, exit retry loop
+              } catch (fetchErr) {
+                console.warn(`Attempt ${attempt}/3 to fetch Razorpay order details failed:`, fetchErr);
+                if (attempt < 3) {
+                  await new Promise((r) => setTimeout(r, 1000)); // Wait 1s before retry
+                }
               }
-            } catch (fetchErr) {
-              console.warn('Could not fetch Razorpay order details, saving with limited info:', fetchErr);
             }
 
             // 3. Save order to Supabase
