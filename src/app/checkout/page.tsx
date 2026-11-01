@@ -81,7 +81,9 @@ export default function CheckoutPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  // Shipping address form (used for BOTH COD and online payment)
+  const [checkoutMode, setCheckoutMode] = useState<'select' | 'cod'>('select');
+
+  // COD address form
   const [codForm, setCodForm] = useState({
     fullName: '',
     phone: '',
@@ -209,13 +211,6 @@ export default function CheckoutPage() {
   const handleOnlinePayment = async () => {
     setErrorMsg('');
 
-    // Validate address first
-    const validationError = validateCodForm();
-    if (validationError) {
-      setErrorMsg(validationError);
-      return;
-    }
-
     if (items.length === 0) {
       setErrorMsg('Your festive bag is empty. Please return to catalog.');
       return;
@@ -314,7 +309,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Open Razorpay checkout with prefilled customer info from our form
+      // Open Magic Checkout -- Razorpay handles address, phone, payment, coupons
       const options = {
         key: orderData.key_id,
         amount: orderData.amount,
@@ -323,11 +318,8 @@ export default function CheckoutPage() {
         description: `Shubh Deepavali Order #${orderId}`,
         image: '/images/shubh_box.png',
         order_id: orderData.id,
-        prefill: {
-          name: codForm.fullName.trim(),
-          contact: codForm.phone.trim(),
-          email: codForm.email.trim() || undefined
-        },
+        one_click_checkout: true,
+        show_coupons: true,
         theme: {
           color: '#8B1818'
         },
@@ -354,21 +346,68 @@ export default function CheckoutPage() {
               throw new Error('Payment verification failed.');
             }
 
-            // 2. Use address from our form (already validated before opening Razorpay)
-            const customerName = codForm.fullName.trim();
-            const customerPhone = codForm.phone.trim();
-            const customerEmail = codForm.email.trim() || '';
-            const shippingAddress: CustomerAddress = {
-              fullName: codForm.fullName.trim(),
-              phone: codForm.phone.trim(),
-              pincode: codForm.pincode.trim(),
-              houseFlatBuilding: codForm.houseFlatBuilding.trim(),
-              roadAreaColony: codForm.roadAreaColony.trim(),
-              landmark: codForm.landmark.trim(),
-              city: codForm.city.trim(),
-              state: codForm.state.trim()
+            // 2. Fetch full order from Razorpay to get customer address
+            let customerName = 'Customer';
+            let customerPhone = '';
+            let customerEmail = '';
+            let shippingAddress: CustomerAddress = {
+              fullName: 'Customer',
+              phone: '',
+              pincode: '',
+              houseFlatBuilding: '',
+              roadAreaColony: '',
+              city: '',
+              state: ''
             };
-            const paymentMethod: 'RAZORPAY' | 'COD' = 'RAZORPAY';
+            let paymentMethod: 'RAZORPAY' | 'COD' = 'RAZORPAY';
+
+            // Retry up to 3 times to fetch customer details from Razorpay
+            for (let attempt = 1; attempt <= 3; attempt++) {
+              try {
+                const orderRes = await fetch('/api/razorpay/fetch-order', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id })
+                });
+
+                if (!orderRes.ok) {
+                  throw new Error(`fetch-order returned ${orderRes.status}`);
+                }
+
+                const rzpOrder = await orderRes.json();
+
+                // Magic Checkout returns customer_details with shipping_address
+                const cd = rzpOrder.customer_details || {};
+                const sa = cd.shipping_address || {};
+
+                customerName = cd.name || sa.name || 'Customer';
+                customerPhone = (cd.contact || sa.contact || '').replace('+91', '').replace(/\D/g, '');
+                customerEmail = cd.email || '';
+
+                shippingAddress = {
+                  fullName: sa.name || customerName,
+                  phone: (sa.contact || customerPhone).replace('+91', '').replace(/\D/g, ''),
+                  pincode: sa.zipcode || '',
+                  houseFlatBuilding: sa.line1 || '',
+                  roadAreaColony: sa.line2 || '',
+                  landmark: sa.landmark || '',
+                  city: sa.city || '',
+                  state: sa.state || ''
+                };
+
+                // Check if COD
+                if (rzpOrder.payment_method === 'cod' || rzpOrder.status === 'placed') {
+                  paymentMethod = 'COD';
+                }
+
+                break; // Success, exit retry loop
+              } catch (fetchErr) {
+                console.warn(`Attempt ${attempt}/3 to fetch Razorpay order details failed:`, fetchErr);
+                if (attempt < 3) {
+                  await new Promise((r) => setTimeout(r, 1000)); // Wait 1s before retry
+                }
+              }
+            }
 
             // 3. Save order to Supabase
             const newOrder: Order = {
@@ -389,7 +428,7 @@ export default function CheckoutPage() {
               shippingFee: 0,
               totalAmount: total,
               paymentMethod,
-              paymentStatus: 'completed' as const,
+              paymentStatus: paymentMethod === 'COD' ? 'pending' : 'completed',
               fulfillmentStatus: 'unfulfilled',
               razorpayOrderId: response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
@@ -635,197 +674,262 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Shipping Address Form -- always shown first */}
-          <div>
-            <h3 style={{ color: 'var(--text-dark)', fontSize: '1rem', fontWeight: 800, margin: '0 0 1.25rem 0' }}>
-              Delivery Address
-            </h3>
+          {/* Payment method selection */}
+          {checkoutMode === 'select' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {/* Pay Online button */}
+              <button
+                onClick={handleOnlinePayment}
+                disabled={isSubmitting}
+                className="btn-primary"
+                style={{
+                  width: '100%',
+                  padding: '1.15rem',
+                  fontSize: '1.05rem',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  boxShadow: 'var(--shadow-crimson)'
+                }}
+              >
+                {isSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Opening Secure Checkout...</span>
+                  </span>
+                ) : (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <CreditCard size={17} />
+                    <span>Pay Online ₹{total}</span>
+                  </span>
+                )}
+              </button>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              {/* Name */}
-              <div>
-                <label style={labelStyle}>Full Name *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Priya Sharma"
-                  value={codForm.fullName}
-                  onChange={(e) => updateCodForm('fullName', e.target.value)}
-                  style={inputStyle}
-                />
+              {/* Divider */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                margin: '0.25rem 0'
+              }}>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>OR</span>
+                <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
               </div>
 
-              {/* Phone + Email */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              {/* COD button */}
+              <button
+                onClick={() => setCheckoutMode('cod')}
+                disabled={isSubmitting}
+                style={{
+                  width: '100%',
+                  padding: '1.05rem',
+                  fontSize: '1rem',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-dark)',
+                  border: '2px solid var(--crimson-royal)',
+                  borderRadius: 'var(--radius-xs)',
+                  fontWeight: 700,
+                  fontFamily: 'var(--font-body)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <Banknote size={18} color="var(--crimson-royal)" />
+                <span>Cash on Delivery ₹{total}</span>
+              </button>
+            </div>
+          )}
+
+          {/* COD Address Form */}
+          {checkoutMode === 'cod' && (
+            <div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '1.25rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '1.5px solid var(--border-subtle)'
+              }}>
+                <h3 style={{ color: 'var(--text-dark)', fontSize: '1rem', fontWeight: 800, margin: 0 }}>
+                  <Banknote size={16} color="var(--crimson-royal)" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />
+                  Delivery Address
+                </h3>
+                <button
+                  onClick={() => { setCheckoutMode('select'); setErrorMsg(''); }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--crimson-royal)',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-body)',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Back to options
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                {/* Name */}
                 <div>
-                  <label style={labelStyle}>Phone Number *</label>
-                  <input
-                    type="tel"
-                    placeholder="10-digit mobile"
-                    value={codForm.phone}
-                    onChange={(e) => updateCodForm('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    style={inputStyle}
-                    maxLength={10}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Email (optional)</label>
-                  <input
-                    type="email"
-                    placeholder="For order updates"
-                    value={codForm.email}
-                    onChange={(e) => updateCodForm('email', e.target.value)}
-                    style={inputStyle}
-                  />
-                </div>
-              </div>
-
-              {/* Pincode */}
-              <div style={{ maxWidth: '200px' }}>
-                <label style={labelStyle}>Pincode *</label>
-                <input
-                  type="text"
-                  placeholder="6-digit pincode"
-                  value={codForm.pincode}
-                  onChange={(e) => updateCodForm('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  style={inputStyle}
-                  maxLength={6}
-                />
-              </div>
-
-              {/* House/Flat */}
-              <div>
-                <label style={labelStyle}>House / Flat / Building *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Flat 202, Sunrise Apartments"
-                  value={codForm.houseFlatBuilding}
-                  onChange={(e) => updateCodForm('houseFlatBuilding', e.target.value)}
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* Road/Area */}
-              <div>
-                <label style={labelStyle}>Road / Area / Colony *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. MG Road, Koramangala"
-                  value={codForm.roadAreaColony}
-                  onChange={(e) => updateCodForm('roadAreaColony', e.target.value)}
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* Landmark */}
-              <div>
-                <label style={labelStyle}>Landmark (optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Near City Mall"
-                  value={codForm.landmark}
-                  onChange={(e) => updateCodForm('landmark', e.target.value)}
-                  style={inputStyle}
-                />
-              </div>
-
-              {/* City + State */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <div>
-                  <label style={labelStyle}>City *</label>
+                  <label style={labelStyle}>Full Name *</label>
                   <input
                     type="text"
-                    placeholder="e.g. Bengaluru"
-                    value={codForm.city}
-                    onChange={(e) => updateCodForm('city', e.target.value)}
+                    placeholder="e.g. Priya Sharma"
+                    value={codForm.fullName}
+                    onChange={(e) => updateCodForm('fullName', e.target.value)}
                     style={inputStyle}
                   />
                 </div>
-                <div>
-                  <label style={labelStyle}>State *</label>
-                  <select
-                    value={codForm.state}
-                    onChange={(e) => updateCodForm('state', e.target.value)}
-                    style={{ ...inputStyle, appearance: 'auto' }}
-                  >
-                    <option value="">Select State</option>
-                    {INDIAN_STATES.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
 
-              {/* Payment method buttons */}
-              <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {/* Pay Online */}
+                {/* Phone + Email */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>Phone Number *</label>
+                    <input
+                      type="tel"
+                      placeholder="10-digit mobile"
+                      value={codForm.phone}
+                      onChange={(e) => updateCodForm('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      style={inputStyle}
+                      maxLength={10}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Email (optional)</label>
+                    <input
+                      type="email"
+                      placeholder="For order updates"
+                      value={codForm.email}
+                      onChange={(e) => updateCodForm('email', e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+
+                {/* Pincode */}
+                <div style={{ maxWidth: '200px' }}>
+                  <label style={labelStyle}>Pincode *</label>
+                  <input
+                    type="text"
+                    placeholder="6-digit pincode"
+                    value={codForm.pincode}
+                    onChange={(e) => updateCodForm('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    style={inputStyle}
+                    maxLength={6}
+                  />
+                </div>
+
+                {/* House/Flat */}
+                <div>
+                  <label style={labelStyle}>House / Flat / Building *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Flat 202, Sunrise Apartments"
+                    value={codForm.houseFlatBuilding}
+                    onChange={(e) => updateCodForm('houseFlatBuilding', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Road/Area */}
+                <div>
+                  <label style={labelStyle}>Road / Area / Colony *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. MG Road, Koramangala"
+                    value={codForm.roadAreaColony}
+                    onChange={(e) => updateCodForm('roadAreaColony', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Landmark */}
+                <div>
+                  <label style={labelStyle}>Landmark (optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Near City Mall"
+                    value={codForm.landmark}
+                    onChange={(e) => updateCodForm('landmark', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* City + State */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>City *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Bengaluru"
+                      value={codForm.city}
+                      onChange={(e) => updateCodForm('city', e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>State *</label>
+                    <select
+                      value={codForm.state}
+                      onChange={(e) => updateCodForm('state', e.target.value)}
+                      style={{ ...inputStyle, appearance: 'auto' }}
+                    >
+                      <option value="">Select State</option>
+                      {INDIAN_STATES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Place COD Order button */}
                 <button
-                  onClick={handleOnlinePayment}
+                  onClick={handleCodOrder}
                   disabled={isSubmitting}
                   className="btn-primary"
                   style={{
                     width: '100%',
                     padding: '1.15rem',
                     fontSize: '1.05rem',
-                    cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    boxShadow: 'var(--shadow-crimson)',
+                    marginTop: '0.5rem'
                   }}
                 >
                   {isSubmitting ? (
                     <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                       <Loader2 size={18} className="animate-spin" />
-                      <span>Processing...</span>
+                      <span>Placing Order...</span>
                     </span>
                   ) : (
                     <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                      <CreditCard size={17} />
-                      <span>Pay Online ₹{total}</span>
+                      <Banknote size={17} />
+                      <span>Place COD Order ₹{total}</span>
                     </span>
                   )}
-                </button>
-
-                {/* Divider */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
-                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>OR</span>
-                  <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
-                </div>
-
-                {/* COD */}
-                <button
-                  onClick={handleCodOrder}
-                  disabled={isSubmitting}
-                  style={{
-                    width: '100%',
-                    padding: '1.05rem',
-                    fontSize: '1rem',
-                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                    background: 'var(--bg-surface)',
-                    color: 'var(--text-dark)',
-                    border: '2px solid var(--crimson-royal)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontWeight: 700,
-                    fontFamily: 'var(--font-body)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  <Banknote size={18} color="var(--crimson-royal)" />
-                  <span>Cash on Delivery ₹{total}</span>
                 </button>
 
                 <p style={{
                   fontSize: '0.76rem',
                   color: 'var(--text-muted)',
                   textAlign: 'center',
+                  marginTop: '0.25rem',
                   lineHeight: 1.5
                 }}>
-                  UPI, cards, net banking, or pay cash at delivery.
+                  Pay ₹{total} in cash when your order is delivered.
+                  <br />
+                  You will receive an order confirmation via SMS.
                 </p>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Trust badges */}
           <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
