@@ -32,6 +32,7 @@ export default function AdminDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const [editingNotes, setEditingNotes] = useState<{ [orderId: string]: string }>({});
 
   // Check session authentication on mount
@@ -422,7 +423,7 @@ Pincode: ${addr.pincode}`;
                       gap: '1.5rem',
                       alignItems: 'start'
                     }}>
-                      {/* Customer Address */}
+                      {/* Customer Address -- each field copyable */}
                       <div style={{
                         background: 'var(--bg-canvas)',
                         padding: '1.25rem',
@@ -449,20 +450,59 @@ Pincode: ${addr.pincode}`;
                             }}
                           >
                             {copiedId === order.id ? <Check size={13} /> : <Copy size={13} />}
-                            <span>{copiedId === order.id ? 'Copied' : 'Copy Full Address'}</span>
+                            <span>{copiedId === order.id ? 'Copied All' : 'Copy Full Address'}</span>
                           </button>
                         </div>
 
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
-                          <div><strong>{order.shippingAddress.fullName}</strong></div>
-                          <div>Phone: <strong>{order.shippingAddress.phone}</strong> {order.shippingAddress.alternatePhone && `(Alt: ${order.shippingAddress.alternatePhone})`}</div>
-                          {order.customerEmail && <div>Email: {order.customerEmail}</div>}
-                          <div style={{ marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
-                            {order.shippingAddress.houseFlatBuilding}, {order.shippingAddress.roadAreaColony}
-                            {order.shippingAddress.landmark && <><br />Landmark: {order.shippingAddress.landmark}</>}
-                            <br />
-                            <strong>{order.shippingAddress.city}, {order.shippingAddress.state} — {order.shippingAddress.pincode}</strong>
-                          </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
+                          {[
+                            { label: 'Name', value: order.shippingAddress.fullName, key: `${order.id}-name` },
+                            { label: 'Phone', value: order.shippingAddress.phone, key: `${order.id}-phone` },
+                            ...(order.shippingAddress.alternatePhone ? [{ label: 'Alt Phone', value: order.shippingAddress.alternatePhone, key: `${order.id}-altphone` }] : []),
+                            ...(order.customerEmail ? [{ label: 'Email', value: order.customerEmail, key: `${order.id}-email` }] : []),
+                            { label: 'House/Flat', value: order.shippingAddress.houseFlatBuilding, key: `${order.id}-house` },
+                            { label: 'Road/Area', value: order.shippingAddress.roadAreaColony, key: `${order.id}-road` },
+                            ...(order.shippingAddress.landmark ? [{ label: 'Landmark', value: order.shippingAddress.landmark, key: `${order.id}-landmark` }] : []),
+                            { label: 'City', value: order.shippingAddress.city, key: `${order.id}-city` },
+                            { label: 'State', value: order.shippingAddress.state, key: `${order.id}-state` },
+                            { label: 'Pincode', value: order.shippingAddress.pincode, key: `${order.id}-pincode` },
+                          ].filter(f => f.value).map((field) => (
+                            <div
+                              key={field.key}
+                              onClick={() => {
+                                navigator.clipboard.writeText(field.value);
+                                setCopiedField(field.key);
+                                setTimeout(() => setCopiedField(null), 1500);
+                              }}
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '0.45rem 0.65rem',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                background: copiedField === field.key ? 'rgba(36, 88, 57, 0.08)' : 'transparent',
+                                border: copiedField === field.key ? '1px solid var(--forest-green)' : '1px solid transparent',
+                                transition: 'all 0.15s'
+                              }}
+                              title={`Click to copy ${field.label}`}
+                            >
+                              <div style={{ display: 'flex', gap: '0.5rem', minWidth: 0 }}>
+                                <span style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.78rem', flexShrink: 0, width: '70px' }}>
+                                  {field.label}
+                                </span>
+                                <span style={{ color: 'var(--text-primary)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {field.value}
+                                </span>
+                              </div>
+                              <span style={{ flexShrink: 0, marginLeft: '0.5rem' }}>
+                                {copiedField === field.key
+                                  ? <Check size={14} color="var(--forest-green)" />
+                                  : <Copy size={14} color="var(--text-muted)" />
+                                }
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       </div>
 

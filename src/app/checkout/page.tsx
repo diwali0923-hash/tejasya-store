@@ -54,25 +54,24 @@ const loadRazorpayScript = (): Promise<boolean> => {
   });
 };
 
-const inputStyle: React.CSSProperties = {
+const meeshoInputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '0.75rem 0.85rem',
-  border: '1.5px solid var(--border-subtle)',
-  borderRadius: 'var(--radius-xs)',
-  fontSize: '0.92rem',
+  padding: '0.85rem 0',
+  border: 'none',
+  borderBottom: '1.5px solid #E0E0E0',
+  borderRadius: 0,
+  fontSize: '0.95rem',
   fontFamily: 'var(--font-body)',
-  background: 'var(--bg-card)',
+  background: 'transparent',
   color: 'var(--text-dark)',
   outline: 'none',
-  transition: 'border-color 0.2s'
+  transition: 'border-color 0.25s'
 };
 
+const inputStyle = meeshoInputStyle;
+
 const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: '0.8rem',
-  fontWeight: 700,
-  color: 'var(--text-dark)',
-  marginBottom: '0.3rem'
+  display: 'none'
 };
 
 export default function CheckoutPage() {
@@ -743,191 +742,178 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          {/* COD Address Form */}
+          {/* COD Address Form -- Meesho-style */}
           {checkoutMode === 'cod' && (
             <div>
+              {/* Header with back */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: '1.25rem',
-                paddingBottom: '0.75rem',
-                borderBottom: '1.5px solid var(--border-subtle)'
+                marginBottom: '1.5rem'
               }}>
-                <h3 style={{ color: 'var(--text-dark)', fontSize: '1rem', fontWeight: 800, margin: 0 }}>
-                  <Banknote size={16} color="var(--crimson-royal)" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />
-                  Delivery Address
+                <h3 style={{ color: 'var(--text-dark)', fontSize: '1.05rem', fontWeight: 800, margin: 0, letterSpacing: '0.02em' }}>
+                  ADD DELIVERY ADDRESS
                 </h3>
                 <button
                   onClick={() => { setCheckoutMode('select'); setErrorMsg(''); }}
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: 'var(--crimson-royal)',
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
+                    color: 'var(--text-muted)',
+                    fontSize: '1.4rem',
                     cursor: 'pointer',
                     fontFamily: 'var(--font-body)',
-                    textDecoration: 'underline'
+                    lineHeight: 1,
+                    padding: '0.25rem'
                   }}
                 >
-                  Back to options
+                  &#x2715;
                 </button>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                {/* Name */}
-                <div>
-                  <label style={labelStyle}>Full Name *</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Priya Sharma"
-                    value={codForm.fullName}
-                    onChange={(e) => updateCodForm('fullName', e.target.value)}
-                    style={inputStyle}
-                  />
+              {/* Contact Details Section */}
+              <div style={{ marginBottom: '1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <span style={{ fontSize: '1.1rem' }}>&#128222;</span>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-dark)' }}>Contact Details</span>
                 </div>
 
-                {/* Phone + Email */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                  <div>
-                    <label style={labelStyle}>Phone Number *</label>
-                    <input
-                      type="tel"
-                      placeholder="10-digit mobile"
-                      value={codForm.phone}
-                      onChange={(e) => updateCodForm('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      style={inputStyle}
-                      maxLength={10}
-                    />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Email (optional)</label>
-                    <input
-                      type="email"
-                      placeholder="For order updates"
-                      value={codForm.email}
-                      onChange={(e) => updateCodForm('email', e.target.value)}
-                      style={inputStyle}
-                    />
-                  </div>
-                </div>
-
-                {/* Pincode */}
-                <div style={{ maxWidth: '200px' }}>
-                  <label style={labelStyle}>Pincode *</label>
-                  <input
-                    type="text"
-                    placeholder="6-digit pincode"
-                    value={codForm.pincode}
-                    onChange={(e) => updateCodForm('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    style={inputStyle}
-                    maxLength={6}
-                  />
-                </div>
-
-                {/* House/Flat */}
-                <div>
-                  <label style={labelStyle}>House / Flat / Building *</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Flat 202, Sunrise Apartments"
-                    value={codForm.houseFlatBuilding}
-                    onChange={(e) => updateCodForm('houseFlatBuilding', e.target.value)}
-                    style={inputStyle}
-                  />
-                </div>
-
-                {/* Road/Area */}
-                <div>
-                  <label style={labelStyle}>Road / Area / Colony *</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. MG Road, Koramangala"
-                    value={codForm.roadAreaColony}
-                    onChange={(e) => updateCodForm('roadAreaColony', e.target.value)}
-                    style={inputStyle}
-                  />
-                </div>
-
-                {/* Landmark */}
-                <div>
-                  <label style={labelStyle}>Landmark (optional)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Near City Mall"
-                    value={codForm.landmark}
-                    onChange={(e) => updateCodForm('landmark', e.target.value)}
-                    style={inputStyle}
-                  />
-                </div>
-
-                {/* City + State */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                  <div>
-                    <label style={labelStyle}>City *</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Bengaluru"
-                      value={codForm.city}
-                      onChange={(e) => updateCodForm('city', e.target.value)}
-                      style={inputStyle}
-                    />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>State *</label>
-                    <select
-                      value={codForm.state}
-                      onChange={(e) => updateCodForm('state', e.target.value)}
-                      style={{ ...inputStyle, appearance: 'auto' }}
-                    >
-                      <option value="">Select State</option>
-                      {INDIAN_STATES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Place COD Order button */}
-                <button
-                  onClick={handleCodOrder}
-                  disabled={isSubmitting}
-                  className="btn-primary"
-                  style={{
-                    width: '100%',
-                    padding: '1.15rem',
-                    fontSize: '1.05rem',
-                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                    boxShadow: 'var(--shadow-crimson)',
-                    marginTop: '0.5rem'
-                  }}
-                >
-                  {isSubmitting ? (
-                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                      <Loader2 size={18} className="animate-spin" />
-                      <span>Placing Order...</span>
-                    </span>
-                  ) : (
-                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                      <Banknote size={17} />
-                      <span>Place COD Order ₹{total}</span>
-                    </span>
-                  )}
-                </button>
-
-                <p style={{
-                  fontSize: '0.76rem',
-                  color: 'var(--text-muted)',
-                  textAlign: 'center',
-                  marginTop: '0.25rem',
-                  lineHeight: 1.5
-                }}>
-                  Pay ₹{total} in cash when your order is delivered.
-                  <br />
-                  You will receive an order confirmation via SMS.
-                </p>
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={codForm.fullName}
+                  onChange={(e) => updateCodForm('fullName', e.target.value)}
+                  style={meeshoInputStyle}
+                />
+                <input
+                  type="tel"
+                  placeholder="Contact Number"
+                  value={codForm.phone}
+                  onChange={(e) => updateCodForm('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  style={{ ...meeshoInputStyle, marginTop: '0.25rem' }}
+                  maxLength={10}
+                />
+                <input
+                  type="email"
+                  placeholder="Email (optional, for order updates)"
+                  value={codForm.email}
+                  onChange={(e) => updateCodForm('email', e.target.value)}
+                  style={{ ...meeshoInputStyle, marginTop: '0.25rem' }}
+                />
               </div>
+
+              {/* Address Section */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <span style={{ fontSize: '1.1rem' }}>&#128205;</span>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-dark)' }}>Address</span>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="House no. / Building name"
+                  value={codForm.houseFlatBuilding}
+                  onChange={(e) => updateCodForm('houseFlatBuilding', e.target.value)}
+                  style={meeshoInputStyle}
+                />
+                <input
+                  type="text"
+                  placeholder="Road name / Area / Colony"
+                  value={codForm.roadAreaColony}
+                  onChange={(e) => updateCodForm('roadAreaColony', e.target.value)}
+                  style={{ ...meeshoInputStyle, marginTop: '0.25rem' }}
+                />
+                <input
+                  type="text"
+                  placeholder="Pincode"
+                  value={codForm.pincode}
+                  onChange={(e) => updateCodForm('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  style={{ ...meeshoInputStyle, marginTop: '0.25rem' }}
+                  maxLength={6}
+                />
+
+                {/* City + State side by side */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.25rem' }}>
+                  <input
+                    type="text"
+                    placeholder="City"
+                    value={codForm.city}
+                    onChange={(e) => updateCodForm('city', e.target.value)}
+                    style={meeshoInputStyle}
+                  />
+                  <select
+                    value={codForm.state}
+                    onChange={(e) => updateCodForm('state', e.target.value)}
+                    style={{
+                      ...meeshoInputStyle,
+                      appearance: 'auto',
+                      color: codForm.state ? 'var(--text-dark)' : '#9CA3AF'
+                    }}
+                  >
+                    <option value="" disabled>State</option>
+                    {INDIAN_STATES.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Nearby Famous Place/Shop/School, etc. (optional)"
+                  value={codForm.landmark}
+                  onChange={(e) => updateCodForm('landmark', e.target.value)}
+                  style={{ ...meeshoInputStyle, marginTop: '0.25rem' }}
+                />
+              </div>
+
+              {/* Save Address and Continue / Place COD Order */}
+              <button
+                onClick={handleCodOrder}
+                disabled={isSubmitting}
+                style={{
+                  width: '100%',
+                  padding: '1.1rem',
+                  fontSize: '1.05rem',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  background: 'var(--crimson-royal)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  fontFamily: 'var(--font-body)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'opacity 0.2s',
+                  opacity: isSubmitting ? 0.7 : 1
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Placing Order...</span>
+                  </>
+                ) : (
+                  <>
+                    <Banknote size={17} />
+                    <span>Place COD Order -- ₹{total}</span>
+                  </>
+                )}
+              </button>
+
+              <p style={{
+                fontSize: '0.76rem',
+                color: 'var(--text-muted)',
+                textAlign: 'center',
+                marginTop: '0.75rem',
+                lineHeight: 1.5
+              }}>
+                Pay ₹{total} in cash when your order is delivered.
+                <br />
+                You will receive an order confirmation via SMS.
+              </p>
             </div>
           )}
 
